@@ -136,7 +136,7 @@ class DiaryScreen(Screen):
                 lbl_date = Label(text=f"[b]{entry.get('d', '')}[/b]", markup=True, halign='left',
                                  color=(0.957, 0.965, 0.980, 1), font_size='14sp')
                 lbl_date.bind(size=lbl_date.setter('text_size'))
-                lbl_icon = Label(text="✎", color=(0.545, 0.718, 1.0, 1), size_hint_x=None, width='24dp')
+                lbl_icon = Label(text="\ue3c9", font_name='MaterialIcons', color=(0.545, 0.718, 1.0, 1), size_hint_x=None, width='24dp', font_size='16sp')
                 row_t.add_widget(lbl_date)
                 row_t.add_widget(lbl_icon)
 

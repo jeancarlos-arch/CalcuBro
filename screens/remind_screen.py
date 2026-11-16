@@ -109,7 +109,7 @@ class RemindScreen(Screen):
             else:
                 time_str = "Sin aviso"
 
-            lbl_bell = Label(text=f"[color={bell_color}]🔔[/color]", markup=True, halign='right', font_size='16sp')
+            lbl_bell = Label(text=f"[color={bell_color}][font=MaterialIcons]\\ue7f4[/font][/color]", markup=True, halign='right', font_size='18sp')
             lbl_bell.bind(size=lbl_bell.setter('text_size'))
             lbl_time = Label(text=f"[color={bell_color}]{time_str}[/color]", markup=True, halign='right', font_size='11sp')
             lbl_time.bind(size=lbl_time.setter('text_size'))

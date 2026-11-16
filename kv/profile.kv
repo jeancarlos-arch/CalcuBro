@@ -42,7 +42,8 @@
                         # Avatar Circular
                         Label:
                             text: root.avatar_initial
-                            font_size: '22sp'
+                            font_name: 'MaterialIcons' if root.avatar_is_icon else 'Roboto'
+                            font_size: '26sp' if root.avatar_is_icon else '22sp'
                             bold: True
                             color: (0.063, 0.094, 0.153, 1)
                             size_hint: (None, None)
@@ -74,27 +75,27 @@
 
                 # Enlaces de Navegación
                 ProfileLinkCard:
-                    icon_text: "✏️"
+                    icon_text: "\ue3c9"
                     link_title: "Editar datos de estudiante / Login"
                     on_release: root.navigate('login')
 
                 ProfileLinkCard:
-                    icon_text: "🔔"
+                    icon_text: "\ue7f4"
                     link_title: "Recordatorios"
                     on_release: root.navigate('remind')
 
                 ProfileLinkCard:
-                    icon_text: "📊"
+                    icon_text: "\ue26b"
                     link_title: "Progreso"
                     on_release: root.navigate('progress')
 
                 ProfileLinkCard:
-                    icon_text: "✎"
+                    icon_text: "\ue8cd"
                     link_title: "Diario personal"
                     on_release: root.navigate('diary')
 
                 ProfileLinkCard:
-                    icon_text: "🔢"
+                    icon_text: "\uea5f"
                     link_title: "Calculadora"
                     on_release: root.navigate('calc')
 

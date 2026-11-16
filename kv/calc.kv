@@ -45,7 +45,8 @@
                 size_hint_y: None
                 height: '32dp'
                 Button:
-                    text: "‹  Volver"
+                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    markup: True
                     size_hint: (None, None)
                     size: ('85dp', '32dp')
                     background_normal: ''
@@ -75,7 +76,8 @@
                 padding: [4, 2]
 
                 Button:
-                    text: "📊 Promedio Ponderado"
+                    text: "[font=MaterialIcons]\\ue26b[/font]  Promedio Ponderado"
+                    markup: True
                     font_size: '13sp'
                     bold: True
                     background_normal: ''
@@ -84,7 +86,8 @@
                     on_release: root.set_mode('weighted')
 
                 Button:
-                    text: "🔢 Calculadora Básica"
+                    text: "[font=MaterialIcons]\\uea5f[/font]  Calculadora Básica"
+                    markup: True
                     font_size: '13sp'
                     bold: True
                     background_normal: ''
@@ -174,22 +177,26 @@
                     spacing: 8
 
                     GhostButton:
-                        text: "➕ Agregar nota"
+                        text: "[font=MaterialIcons]\\ue145[/font]  Agregar nota"
+                        markup: True
                         font_size: '13sp'
                         on_release: root.add_grade()
 
                     GhostButton:
-                        text: "⚖️ Repartir % igual"
+                        text: "[font=MaterialIcons]\\ueaf6[/font]  Repartir % igual"
+                        markup: True
                         font_size: '13sp'
                         on_release: root.distribute_weights_equally()
 
                     GhostButton:
-                        text: "📚 Cargar de materias"
+                        text: "[font=MaterialIcons]\\ue865[/font]  Cargar de materias"
+                        markup: True
                         font_size: '13sp'
                         on_release: root.load_from_subject()
 
                     DangerButton:
-                        text: "🗑 Vaciar lista"
+                        text: "[font=MaterialIcons]\\ue872[/font]  Vaciar lista"
+                        markup: True
                         font_size: '13sp'
                         on_release: root.clear_all_grades()
 
@@ -204,7 +211,8 @@
                 # Simulador de nota en lo pendiente
                 DarkCard:
                     Label:
-                        text: "🔮 Simular nota en lo pendiente"
+                        text: "[font=MaterialIcons]\\ue65f[/font]  Simular nota en lo pendiente"
+                        markup: True
                         font_size: '13sp'
                         bold: True
                         color: (0.545, 0.718, 1.0, 1)
@@ -333,7 +341,8 @@
 
                 # Botón de Restablecer ejemplo
                 GhostButton:
-                    text: "🔄 Restablecer ejemplo inicial"
+                    text: "[font=MaterialIcons]\\ue863[/font]  Restablecer ejemplo inicial"
+                    markup: True
                     on_release: root.reset_example()
 
                 Widget:
@@ -388,7 +397,9 @@
                     text: "C"
                     on_release: root.on_key_press('C')
                 CalcOpButton:
-                    text: "⌫"
+                    text: "\ue14a"
+                    font_name: 'MaterialIcons'
+                    font_size: '22sp'
                     on_release: root.on_key_press('DEL')
                 CalcOpButton:
                     text: "%"

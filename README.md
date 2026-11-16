@@ -1,4 +1,4 @@
-# StudyMate - Aplicación Móvil Académica
+# CalcuBro - Aplicación Móvil Académica
 
 Aplicación móvil desarrollada en **Python 3.10.5** y **Kivy 2.3.0** para la gestión académica integral de estudiantes universitarios (seguimiento de calificaciones, cálculo predictivo de aprobación, horario semanal interactivo, importación de horarios por foto/OCR, diario de reflexión, recordatorios y analítica de progreso).
 
@@ -61,6 +61,9 @@ proyecto_movil/
 ├── requirements.txt          # Dependencias (kivy==2.3.0)
 ├── .gitignore                # Exclusiones de Git (venv/, __pycache__/)
 ├── README.md                 # Guía y documentación del proyecto
+│
+├── assets/                   # RECURSOS Y FUENTES
+│   └── fonts/                # Fuentes tipográficas (MaterialIcons-Regular.ttf)
 │
 ├── kv/                       # VISTAS DECLARATIVAS (.kv independientes)
 │   ├── welcome.kv            # Pantalla de bienvenida y presentación

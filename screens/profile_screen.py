@@ -7,7 +7,8 @@ class ProfileScreen(Screen):
     notifications_enabled = BooleanProperty(True)
     user_name = StringProperty("Estudiante")
     user_career_sem = StringProperty("Toca abajo para registrar tus datos")
-    avatar_initial = StringProperty("👤")
+    avatar_initial = StringProperty("\ue7fd")
+    avatar_is_icon = BooleanProperty(True)
 
     def on_pre_enter(self, *args):
         app = App.get_running_app()
@@ -19,9 +20,11 @@ class ProfileScreen(Screen):
             if name:
                 self.user_name = name
                 self.avatar_initial = name[0].upper()
+                self.avatar_is_icon = False
             else:
                 self.user_name = "Estudiante"
-                self.avatar_initial = "👤"
+                self.avatar_initial = "\ue7fd"
+                self.avatar_is_icon = True
 
             career = store.student_career.strip() if store.student_career else ""
             sem = store.student_semester.strip() if store.student_semester else ""

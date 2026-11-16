@@ -22,7 +22,8 @@
 
                 # Botón Volver
                 Button:
-                    text: "‹  Volver"
+                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    markup: True
                     size_hint: (None, None)
                     size: ('90dp', '32dp')
                     background_normal: ''
@@ -38,12 +39,33 @@
                     size_hint_y: None
                     height: '84dp'
                     spacing: 4
-                    Label:
-                        text: "🎓"
-                        font_size: '42sp'
+                    AnchorLayout:
+                        anchor_x: 'center'
+                        anchor_y: 'center'
                         size_hint_y: None
-                        height: '48dp'
-                        halign: 'center'
+                        height: '50dp'
+                        BoxLayout:
+                            size_hint: (None, None)
+                            size: ('48dp', '48dp')
+                            canvas.before:
+                                Color:
+                                    rgba: (0.106, 0.149, 0.220, 1)
+                                RoundedRectangle:
+                                    pos: self.pos
+                                    size: self.size
+                                    radius: [14]
+                                Color:
+                                    rgba: (0.337, 0.537, 0.910, 0.3)
+                                Line:
+                                    rounded_rectangle: [self.x, self.y, self.width, self.height, 14]
+                                    width: 1
+                            Label:
+                                text: "\ue80c"
+                                font_name: 'MaterialIcons'
+                                font_size: '28sp'
+                                color: (0.545, 0.718, 1.0, 1)
+                                halign: 'center'
+                                valign: 'middle'
                     Label:
                         text: "[b]Registro de Estudiante[/b]"
                         markup: True

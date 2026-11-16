@@ -192,7 +192,8 @@ class ScheduleScreen(Screen):
                           size=lambda obj, val, r=r_bg: setattr(r, 'size', val))
 
             top_row = BoxLayout(size_hint_y=None, height='20dp')
-            lbl_time = Label(text=f"🕐  {c.get('h', '')}", color=(0.545, 0.718, 1.0, 1), font_size='12sp',
+            lbl_time = Label(text=f"[font=MaterialIcons]\\ue192[/font]  {c.get('h', '')}", markup=True,
+                             color=(0.545, 0.718, 1.0, 1), font_size='12sp',
                              halign='left', valign='middle')
             lbl_time.bind(size=lbl_time.setter('text_size'))
             top_row.add_widget(lbl_time)
@@ -201,8 +202,8 @@ class ScheduleScreen(Screen):
                              font_size='15sp', halign='left', valign='middle', size_hint_y=None, height='24dp')
             lbl_name.bind(size=lbl_name.setter('text_size'))
 
-            room_str = f"📍  Aula: {c.get('a', '')}" if c.get('a') else "📍  Aula no especificada"
-            lbl_room = Label(text=room_str, color=(0.627, 0.682, 0.753, 1),
+            room_str = f"[font=MaterialIcons]\\ue0c8[/font]  Aula: {c.get('a', '')}" if c.get('a') else "[font=MaterialIcons]\\ue0c8[/font]  Aula no especificada"
+            lbl_room = Label(text=room_str, markup=True, color=(0.627, 0.682, 0.753, 1),
                              font_size='12sp', halign='left', valign='middle', size_hint_y=None, height='18dp')
             lbl_room.bind(size=lbl_room.setter('text_size'))
 

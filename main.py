@@ -10,6 +10,7 @@ Config.set('graphics', 'resizable', '1')
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
+from kivy.core.text import LabelBase
 from kivy.uix.screenmanager import ScreenManager, SlideTransition
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
@@ -18,6 +19,12 @@ from kivy.clock import Clock
 
 # Definir color de fondo global (--bg: #101827)
 Window.clearcolor = (0.063, 0.094, 0.153, 1)
+
+# Registrar fuente de íconos MaterialIcons con ruta relativa
+base_dir = os.path.dirname(os.path.abspath(__file__))
+font_path = os.path.join(base_dir, 'assets', 'fonts', 'MaterialIcons-Regular.ttf')
+if os.path.exists(font_path):
+    LabelBase.register(name='MaterialIcons', fn_regular=font_path)
 
 # Importar las clases de pantallas
 from screens.welcome_screen import WelcomeScreen
@@ -112,10 +119,10 @@ GLOBAL_KV = """
 <TileButton@Button>:
     icon_text: ""
     title_text: ""
-    text: f"{self.icon_text}\\n{self.title_text}"
+    markup: True
+    text: f"[size=24sp][font=MaterialIcons]{self.icon_text}[/font][/size]\\n[size=12sp]{self.title_text}[/size]"
     halign: 'center'
     valign: 'middle'
-    font_size: '13sp'
     background_normal: ''
     background_color: (0.106, 0.149, 0.220, 1)
     color: (0.545, 0.718, 1.0, 1)
@@ -124,7 +131,8 @@ GLOBAL_KV = """
 <ProfileLinkCard@Button>:
     icon_text: ""
     link_title: ""
-    text: f"  {self.icon_text}   {self.link_title}"
+    markup: True
+    text: f"   [size=20sp][color=8bb7ff][font=MaterialIcons]{self.icon_text}[/font][/color][/size]    {self.link_title}"
     halign: 'left'
     font_size: '14sp'
     size_hint_y: None
@@ -151,7 +159,8 @@ GLOBAL_KV = """
             width: dp(1)
 
     Button:
-        text: "🏠\\nInicio"
+        markup: True
+        text: f"[size=20sp][font=MaterialIcons]\\ue88a[/font][/size]\\n[size=10sp]Inicio[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -161,7 +170,8 @@ GLOBAL_KV = """
         on_release: app.go_screen('home', clear_history=True)
 
     Button:
-        text: "📚\\nMaterias"
+        markup: True
+        text: f"[size=20sp][font=MaterialIcons]\\ue865[/font][/size]\\n[size=10sp]Materias[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -171,7 +181,8 @@ GLOBAL_KV = """
         on_release: app.go_screen('subjects', clear_history=True)
 
     Button:
-        text: "📅\\nHorario"
+        markup: True
+        text: f"[size=20sp][font=MaterialIcons]\\ue878[/font][/size]\\n[size=10sp]Horario[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -181,7 +192,8 @@ GLOBAL_KV = """
         on_release: app.go_screen('schedule', clear_history=True)
 
     Button:
-        text: "🔢\\nCalculadora"
+        markup: True
+        text: f"[size=20sp][font=MaterialIcons]\\uea5f[/font][/size]\\n[size=10sp]Calculadora[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -193,7 +205,7 @@ GLOBAL_KV = """
 
 
 class DataStore:
-    """Almacén central del estado académico de StudyMate"""
+    """Almacén central del estado académico de CalcuBro"""
     def __init__(self):
         # Datos del perfil del estudiante
         self.student_name = ""
@@ -214,6 +226,13 @@ class DataStore:
         self.global_notifications = True
         self.reminders = []
         self.diary_entries = []
+        self.diary_questions = [
+            "1. ¿Qué aprendiste hoy en tus clases?",
+            "2. ¿Qué dificultades encontraste?",
+            "3. ¿Cuánto tiempo dedicaste al estudio?",
+            "4. ¿Qué pendientes tienes para mañana?",
+            "5. ¿Cuál fue tu principal logro hoy?"
+        ]
 
     def get_active_subject_obj(self):
         for s in self.subjects:
@@ -287,7 +306,7 @@ TAB_MAP = {
 }
 
 
-class StudyMateApp(App):
+class CalcuBroApp(App):
     active_tab = StringProperty('home')
 
     def __init__(self, **kwargs):
@@ -296,7 +315,7 @@ class StudyMateApp(App):
         self.history_stack = []
 
     def build(self):
-        self.title = "StudyMate"
+        self.title = "CalcuBro"
 
         # Cargar estilos globales
         Builder.load_string(GLOBAL_KV)
@@ -397,5 +416,8 @@ class StudyMateApp(App):
         self.toast_color.a = 0
 
 
+# Compatibilidad con imports previos
+StudyMateApp = CalcuBroApp
+
 if __name__ == '__main__':
-    StudyMateApp().run()
+    CalcuBroApp().run()

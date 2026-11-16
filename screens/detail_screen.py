@@ -303,9 +303,9 @@ class DetailScreen(Screen):
             lbl_h.bind(size=lbl_h.setter('text_size'))
 
             btn_del_cat = Button(
-                text="✕", size_hint=(None, None), size=('26dp', '26dp'),
+                text="\ue5cd", font_name='MaterialIcons', size_hint=(None, None), size=('26dp', '26dp'),
                 background_normal='', background_color=(0, 0, 0, 0),
-                color=(0.949, 0.651, 0.353, 1), font_size='13sp'
+                color=(0.949, 0.651, 0.353, 1), font_size='16sp'
             )
             btn_del_cat.bind(on_release=lambda x, ci=c_idx: self.delete_category(ci))
 
@@ -324,7 +324,7 @@ class DetailScreen(Screen):
                     g_val = it.get('g')
                     g_display = f"{float(g_val):.2f}" if g_val is not None else "[color=a0aec0]Pendiente[/color]"
                     btn_row = Button(
-                        text=f"  {it.get('n', '')}   ➔   {g_display}", markup=True,
+                        text=f"  {it.get('n', '')}   [font=MaterialIcons]\\ue5c8[/font]   {g_display}", markup=True,
                         halign='left', valign='middle', background_normal='',
                         background_color=(0.063, 0.094, 0.153, 0.7), color=(0.957, 0.965, 0.980, 1),
                         font_size='13sp'
