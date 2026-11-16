@@ -31,7 +31,7 @@
                     spacing: dp(8)
 
                     Button:
-                        text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                        text: "< Volver"
                         markup: True
                         size_hint_x: None
                         width: dp(85)
@@ -272,12 +272,8 @@
                         valign: 'middle'
                         text_size: self.width, None
 
-                PrimaryButton:
-                    text: "Calcular resultados"
-                    on_release: root.calculate_results(silent=False)
-
                 GhostButton:
-                    text: "[font=MaterialIcons]\\ue863[/font]  Restablecer ejemplo"
+                    text: "RESTABLECER EJEMPLO"
                     markup: True
                     on_release: root.reset_example()
 
