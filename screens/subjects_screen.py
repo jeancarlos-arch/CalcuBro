@@ -207,8 +207,9 @@ class SubjectsScreen(Screen):
             lbl_grade.bind(size=lbl_grade.setter('text_size'))
 
             btn_edit = Button(
-                text="✏️", size_hint=(None, None), size=('30dp', '28dp'),
-                background_normal='', background_color=(0, 0, 0, 0), font_size='14sp'
+                text="\ue3c9", font_name='MaterialIcons', size_hint=(None, None), size=('30dp', '28dp'),
+                background_normal='', background_color=(0, 0, 0, 0), font_size='16sp',
+                color=(0.545, 0.718, 1.0, 1)
             )
             btn_edit.bind(on_release=lambda x, i=idx: self.open_subject_modal(i))
 

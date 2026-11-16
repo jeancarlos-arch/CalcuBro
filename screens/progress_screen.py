@@ -41,8 +41,8 @@ class AchievementsModal(ModalView):
                          size=lambda obj, val, r=r_r: setattr(r, 'size', val))
 
             star_color = "39c98a" if completed else "a0aec0"
-            star_symbol = "★" if completed else "☆"
-            lbl = Label(text=f"[color={star_color}]{star_symbol}[/color]  {text}", markup=True,
+            star_icon = "\ue838" if completed else "\ue83a"
+            lbl = Label(text=f"[color={star_color}][font=MaterialIcons]{star_icon}[/font][/color]  {text}", markup=True,
                         font_size='13sp', halign='left', valign='middle')
             lbl.bind(size=lbl.setter('text_size'))
             row.add_widget(lbl)

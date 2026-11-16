@@ -303,8 +303,8 @@ class CalcScreen(Screen):
 
             lbl1 = Label(text="[b]No hay evaluaciones en la lista[/b]", markup=True,
                          color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='22dp')
-            lbl2 = Label(text="Toca '➕ Agregar nota' o '📚 Cargar de materias' para comenzar.",
-                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='20dp')
+            lbl2 = Label(text="Toca '[font=MaterialIcons]\\ue145[/font] Agregar nota' o '[font=MaterialIcons]\\ue865[/font] Cargar de materias' para comenzar.",
+                         markup=True, color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='20dp')
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
             container.add_widget(empty_box)
@@ -338,7 +338,8 @@ class CalcScreen(Screen):
             txt_name.bind(text=lambda inst, val, i=idx: self.update_grade_val(i, 'n', val, is_str=True))
 
             btn_del = Button(
-                text="🗑 Eliminar",
+                text="[font=MaterialIcons]\\ue872[/font] Eliminar",
+                markup=True,
                 size_hint=(None, None),
                 size=('84dp', '30dp'),
                 background_normal='',
@@ -436,7 +437,7 @@ class CalcScreen(Screen):
         self.progress_percent = int(min(100, max(0, ev)))
 
         if ev > 100.0:
-            self.warning_text = f"⚠️ La suma de pesos es {ev:.1f}%. Excede el 100% permitido."
+            self.warning_text = f"La suma de pesos es {ev:.1f}%. Excede el 100% permitido."
             self.evaluated_text = f"{ev:.1f}%"
             self.pending_text = "0%"
             self.status_badge_text = "Exceso de peso %"
@@ -475,7 +476,7 @@ class CalcScreen(Screen):
             try:
                 sim_val = float(sim_input)
                 fn = pts + (sim_val * pe / 100.0)
-                status_str = "Aprobado 🎉" if fn >= self.scale_min else "Por debajo del mínimo ⚠️"
+                status_str = "Aprobado" if fn >= self.scale_min else "Por debajo del mínimo"
                 self.sim_result_text = f"Simulación: obteniendo {sim_val:.2f} en el {pe:.0f}% pendiente, tu nota final sería {fn:.2f} ({status_str})."
             except ValueError:
                 self.sim_result_text = ""

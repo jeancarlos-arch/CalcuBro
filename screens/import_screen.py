@@ -32,12 +32,14 @@ class ImportScreen(Screen):
 
         if self.current_step == 0:
             # Paso 0: Selección de archivo / foto
-            btn_gal = Button(text="📁  Elegir de la galería", size_hint_y=None, height='54dp',
+            btn_gal = Button(text="[font=MaterialIcons]\\ue8a3[/font]   Elegir de la galería", markup=True,
+                             size_hint_y=None, height='54dp',
                              background_normal='', background_color=(0.106, 0.149, 0.220, 1),
                              color=(0.545, 0.718, 1.0, 1), bold=True, font_size='15sp')
             btn_gal.bind(on_release=lambda x: self.set_step(1))
 
-            btn_cam = Button(text="📷  Tomar una fotografía", size_hint_y=None, height='54dp',
+            btn_cam = Button(text="[font=MaterialIcons]\\ue412[/font]   Tomar una fotografía", markup=True,
+                             size_hint_y=None, height='54dp',
                              background_normal='', background_color=(0.106, 0.149, 0.220, 1),
                              color=(0.545, 0.718, 1.0, 1), bold=True, font_size='15sp')
             btn_cam.bind(on_release=lambda x: self.set_step(1))
@@ -100,7 +102,7 @@ class ImportScreen(Screen):
                 proc_card.bind(pos=lambda obj, val, r=r_c: setattr(r, 'pos', val),
                                  size=lambda obj, val, r=r_c: setattr(r, 'size', val))
 
-            lbl_proc = Label(text="Reconociendo materias, días, horas y aulas…\n\nPor favor espera unos segundos.",
+            lbl_proc = Label(text="Reconociendo materias, días, horas y aulas...\n\nPor favor espera unos segundos.",
                              color=(0.545, 0.718, 1.0, 1), font_size='14sp', halign='center', valign='middle')
             lbl_proc.bind(size=lbl_proc.setter('text_size'))
             proc_card.add_widget(lbl_proc)
