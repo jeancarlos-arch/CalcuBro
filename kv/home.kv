@@ -48,65 +48,143 @@
                     size_hint_y: None
                     height: '118dp'
                     BoxLayout:
-                        orientation: 'vertical'
+                        orientation: 'horizontal'
                         size_hint: (1, 1)
                         padding: [16, 12]
-                        spacing: 4
+                        spacing: 10
                         canvas.before:
                             Color:
                                 rgba: (0.337, 0.537, 0.910, 1) # --bl
                             RoundedRectangle:
                                 pos: self.pos
                                 size: self.size
-                                radius: [14]
+                                radius: [dp(14)]
 
+                        # Icono grande
                         Label:
-                            text: root.active_class_time
-                            font_size: '11sp'
-                            color: (0.063, 0.094, 0.153, 1)
-                            bold: True
-                            halign: 'left'
-                            size_hint_y: None
-                            height: '16dp'
-                            text_size: self.size
-
-                        Label:
-                            text: f"[b]{root.active_class_name}[/b]"
+                            text: "[font=MaterialIcons][/font]"
                             markup: True
-                            font_size: '18sp'
-                            color: (0.063, 0.094, 0.153, 1)
-                            halign: 'left'
-                            size_hint_y: None
-                            height: '24dp'
-                            text_size: self.size
+                            font_size: '32sp'
+                            color: (0.063, 0.094, 0.153, 0.6)
+                            size_hint: (None, 1)
+                            width: '42dp'
+                            halign: 'center'
+                            valign: 'top'
 
-                        Label:
-                            text: root.active_class_room
-                            font_size: '13sp'
-                            color: (0.063, 0.094, 0.153, 0.9)
-                            halign: 'left'
-                            size_hint_y: None
-                            height: '18dp'
-                            text_size: self.size
+                        BoxLayout:
+                            orientation: 'vertical'
+                            spacing: 3
 
-                        Label:
-                            text: root.next_class_info
-                            font_size: '11sp'
-                            color: (0.063, 0.094, 0.153, 0.8)
-                            halign: 'left'
-                            size_hint_y: None
-                            height: '16dp'
-                            text_size: self.size
+                            Label:
+                                text: root.active_class_time
+                                font_size: '11sp'
+                                color: (0.063, 0.094, 0.153, 1)
+                                bold: True
+                                halign: 'left'
+                                size_hint_y: None
+                                height: '16dp'
+                                text_size: self.size
+
+                            Label:
+                                text: f"[b]{root.active_class_name}[/b]"
+                                markup: True
+                                font_size: '17sp'
+                                color: (0.063, 0.094, 0.153, 1)
+                                halign: 'left'
+                                size_hint_y: None
+                                height: '24dp'
+                                text_size: self.size
+
+                            Label:
+                                text: f"[font=MaterialIcons][/font]  {root.active_class_room}"
+                                markup: True
+                                font_size: '12sp'
+                                color: (0.063, 0.094, 0.153, 0.85)
+                                halign: 'left'
+                                size_hint_y: None
+                                height: '18dp'
+                                text_size: self.size
+
+                            Label:
+                                text: root.next_class_info
+                                font_size: '11sp'
+                                color: (0.063, 0.094, 0.153, 0.7)
+                                halign: 'left'
+                                size_hint_y: None
+                                height: '16dp'
+                                text_size: self.size
 
                     Button:
                         background_color: (0, 0, 0, 0)
                         size_hint: (1, 1)
                         on_release: root.navigate('schedule')
 
-                # Tarjeta 2: Resumen Académico (Enlace a Materias)
+                # Tarjeta 2: Pendientes de hoy (Enlace a Recordatorios)
                 RelativeLayout:
                     size_hint_y: None
-                    height: '106dp'
+                    height: '100dp'
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint: (1, 1)
+                        padding: [16, 12]
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: (0.106, 0.149, 0.220, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(14)]
+
+                        # Icono
+                        Label:
+                            text: "[font=MaterialIcons][/font]"
+                            markup: True
+                            font_size: '28sp'
+                            color: (0.949, 0.651, 0.353, 0.7)
+                            size_hint: (None, 1)
+                            width: '36dp'
+                            halign: 'center'
+                            valign: 'top'
+
+                        BoxLayout:
+                            orientation: 'vertical'
+                            spacing: 4
+
+                            BoxLayout:
+                                size_hint_y: None
+                                height: '22dp'
+                                Label:
+                                    text: "[b]Pendientes de hoy[/b]"
+                                    markup: True
+                                    font_size: '14sp'
+                                    halign: 'left'
+                                    text_size: self.size
+                                Label:
+                                    text: f"[color=f2a65a][size=12sp]{root.reminders_count_text}[/size][/color]"
+                                    markup: True
+                                    halign: 'right'
+                                    size_hint_x: None
+                                    width: '100dp'
+                                    text_size: self.size
+
+                            Label:
+                                text: root.reminders_summary_text
+                                font_size: '12sp'
+                                color: (0.627, 0.682, 0.753, 1)
+                                halign: 'left'
+                                valign: 'top'
+                                text_size: self.width, None
+
+                    Button:
+                        background_color: (0, 0, 0, 0)
+                        size_hint: (1, 1)
+                        on_release: root.navigate('remind')
+
+                # Tarjeta 3: Progreso del semestre (Enlace a Progreso)
+                RelativeLayout:
+                    size_hint_y: None
+                    height: '120dp'
                     BoxLayout:
                         orientation: 'vertical'
                         size_hint: (1, 1)
@@ -118,24 +196,25 @@
                             RoundedRectangle:
                                 pos: self.pos
                                 size: self.size
-                                radius: [14]
+                                radius: [dp(14)]
 
                         BoxLayout:
                             size_hint_y: None
                             height: '24dp'
+                            spacing: 6
                             Label:
-                                text: "[b]Promedio General[/b]"
+                                text: "[font=MaterialIcons][/font]  [b]Progreso del semestre[/b]"
                                 markup: True
                                 font_size: '14sp'
                                 halign: 'left'
                                 text_size: self.size
                             Label:
-                                text: f"[color=39c98a][b]{root.progress_avg_text}[/b][/color]"
+                                text: f"[color=39c98a][b]{root.progress_percent}%[/b][/color]"
                                 markup: True
                                 halign: 'right'
                                 size_hint_x: None
-                                width: '70dp'
-                                font_size: '18sp'
+                                width: '60dp'
+                                font_size: '17sp'
                                 text_size: self.size
 
                         CustomProgressBar:
@@ -143,19 +222,19 @@
                             bar_color: (0.224, 0.788, 0.541, 1)
 
                         Label:
-                            text: f"{root.subjects_count_text} · {root.progress_percent}% evaluado"
+                            text: root.motivational_text
                             font_size: '12sp'
                             color: (0.627, 0.682, 0.753, 1)
                             halign: 'left'
                             valign: 'middle'
                             size_hint_y: None
-                            height: '18dp'
-                            text_size: self.size
+                            height: '36dp'
+                            text_size: self.width, None
 
                     Button:
                         background_color: (0, 0, 0, 0)
                         size_hint: (1, 1)
-                        on_release: root.navigate('subjects')
+                        on_release: root.navigate('progress')
 
                 # Título de Accesos Directos
                 Label:
@@ -168,32 +247,42 @@
                     height: '22dp'
                     text_size: self.size
 
-                # Grilla de Accesos Directos: Materias, Horario, Calculadora, Perfil
+                # Grilla de 6 Accesos Directos
                 GridLayout:
-                    cols: 2
+                    cols: 3
                     size_hint_y: None
-                    height: '170dp'
-                    spacing: 10
+                    height: '176dp'
+                    spacing: 8
 
                     TileButton:
-                        icon_text: "\ue865"
-                        title_text: "Mis Materias"
+                        icon_text: ""
+                        title_text: "Materias"
                         on_release: root.navigate('subjects')
 
                     TileButton:
-                        icon_text: "\ue878"
-                        title_text: "Mi Horario"
+                        icon_text: ""
+                        title_text: "Horario"
                         on_release: root.navigate('schedule')
 
                     TileButton:
-                        icon_text: "\uea5f"
+                        icon_text: ""
                         title_text: "Calculadora"
                         on_release: root.navigate('calc')
 
                     TileButton:
-                        icon_text: "\ue7fd"
-                        title_text: "Mi Perfil"
-                        on_release: root.navigate('profile')
+                        icon_text: ""
+                        title_text: "Diario"
+                        on_release: root.navigate('diary')
+
+                    TileButton:
+                        icon_text: ""
+                        title_text: "Progreso"
+                        on_release: root.navigate('progress')
+
+                    TileButton:
+                        icon_text: ""
+                        title_text: "Alertas"
+                        on_release: root.navigate('remind')
 
                 Widget:
                     size_hint_y: None

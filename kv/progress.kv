@@ -22,7 +22,7 @@
 
                 # Botón Volver
                 Button:
-                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    text: "[font=MaterialIcons][/font]  Volver"
                     markup: True
                     size_hint: (None, None)
                     size: ('90dp', '32dp')
@@ -35,7 +35,7 @@
 
                 # Encabezado
                 Label:
-                    text: "[b]Tu progreso[/b]"
+                    text: "[font=MaterialIcons][/font]  [b]Tu progreso[/b]"
                     markup: True
                     font_size: '24sp'
                     color: (0.957, 0.965, 0.980, 1)
@@ -59,47 +59,68 @@
                 GridLayout:
                     cols: 3
                     size_hint_y: None
-                    height: '76dp'
+                    height: '80dp'
                     spacing: 8
 
                     DarkCard:
-                        padding: 6
+                        size_hint_y: None
+                        height: '80dp'
+                        padding: [8, 12]
+                        spacing: 4
                         Label:
                             text: f"[color=8bb7ff][b]{root.general_avg_text}[/b][/color]"
                             markup: True
-                            font_size: '18sp'
+                            font_size: '20sp'
                             halign: 'center'
+                            size_hint_y: None
+                            height: '28dp'
                         Label:
                             text: "Promedio"
                             color: (0.627, 0.682, 0.753, 1)
-                            font_size: '11sp'
+                            font_size: '12sp'
                             halign: 'center'
+                            size_hint_y: None
+                            height: '18dp'
 
                     DarkCard:
-                        padding: 6
+                        size_hint_y: None
+                        height: '80dp'
+                        padding: [8, 12]
+                        spacing: 4
                         Label:
                             text: f"[color=39c98a][b]{root.semester_adv_text}[/b][/color]"
                             markup: True
-                            font_size: '18sp'
+                            font_size: '20sp'
                             halign: 'center'
+                            size_hint_y: None
+                            height: '28dp'
                         Label:
                             text: "Avance"
                             color: (0.627, 0.682, 0.753, 1)
-                            font_size: '11sp'
+                            font_size: '12sp'
                             halign: 'center'
+                            size_hint_y: None
+                            height: '18dp'
 
                     DarkCard:
-                        padding: 6
+                        size_hint_y: None
+                        height: '80dp'
+                        padding: [8, 12]
+                        spacing: 4
                         Label:
                             text: f"[color=f2a65a][b]{root.goals_met_text}[/b][/color]"
                             markup: True
-                            font_size: '16sp'
+                            font_size: '18sp'
                             halign: 'center'
+                            size_hint_y: None
+                            height: '28dp'
                         Label:
                             text: "Metas"
                             color: (0.627, 0.682, 0.753, 1)
-                            font_size: '11sp'
+                            font_size: '12sp'
                             halign: 'center'
+                            size_hint_y: None
+                            height: '18dp'
 
                 # Gráfico de Evolución del promedio
                 DarkCard:
@@ -123,7 +144,7 @@
                             orientation: 'vertical'
                             spacing: 4
                             Label:
-                                text: "7.80"
+                                text: root.p1_score_text
                                 font_size: '11sp'
                                 size_hint_y: None
                                 height: '16dp'
@@ -147,7 +168,7 @@
                             orientation: 'vertical'
                             spacing: 4
                             Label:
-                                text: "8.20"
+                                text: root.p2_score_text
                                 font_size: '11sp'
                                 size_hint_y: None
                                 height: '16dp'
@@ -194,49 +215,69 @@
                 GridLayout:
                     cols: 2
                     size_hint_y: None
-                    height: '84dp'
+                    height: '92dp'
                     spacing: 10
 
                     DarkCard:
-                        padding: 8
+                        size_hint_y: None
+                        height: '92dp'
+                        padding: [12, 10]
+                        spacing: 3
                         Label:
-                            text: "Mejor rendimiento"
+                            text: "[font=MaterialIcons][/font] Mejor rendimiento"
+                            markup: True
                             font_size: '11sp'
                             color: (0.627, 0.682, 0.753, 1)
                             halign: 'left'
+                            size_hint_y: None
+                            height: '18dp'
                             text_size: self.size
                         Label:
                             text: f"[b]{root.best_subject_name}[/b]"
                             markup: True
-                            font_size: '13sp'
+                            font_size: '14sp'
                             halign: 'left'
+                            size_hint_y: None
+                            height: '24dp'
                             text_size: self.size
                         Label:
                             text: f"[color=39c98a][b]{root.best_subject_score}[/b][/color]"
                             markup: True
-                            font_size: '14sp'
+                            font_size: '15sp'
                             halign: 'left'
+                            size_hint_y: None
+                            height: '20dp'
                             text_size: self.size
 
                     DarkCard:
-                        padding: 8
+                        size_hint_y: None
+                        height: '92dp'
+                        padding: [12, 10]
+                        spacing: 3
                         Label:
-                            text: "Merece atención"
+                            text: "[font=MaterialIcons][/font] Merece atención"
+                            markup: True
                             font_size: '11sp'
                             color: (0.627, 0.682, 0.753, 1)
                             halign: 'left'
+                            size_hint_y: None
+                            height: '18dp'
                             text_size: self.size
                         Label:
                             text: f"[b]{root.focus_subject_name}[/b]"
                             markup: True
-                            font_size: '13sp'
+                            font_size: '14sp'
                             halign: 'left'
+                            size_hint_y: None
+                            height: '24dp'
                             text_size: self.size
                         Label:
                             text: f"[color=f2a65a][b]{root.focus_subject_score}[/b][/color]"
                             markup: True
-                            font_size: '14sp'
+                            font_size: '15sp'
                             halign: 'left'
+                            size_hint_y: None
+                            height: '20dp'
                             text_size: self.size
 
                 # Tarjeta Motivacional
@@ -248,11 +289,12 @@
                         halign: 'left'
                         valign: 'middle'
                         size_hint_y: None
-                        height: '42dp'
-                        text_size: self.size
+                        height: '48dp'
+                        text_size: self.width, None
 
                 PrimaryButton:
-                    text: "Consultar logros"
+                    text: "[font=MaterialIcons][/font]  Consultar logros"
+                    markup: True
                     on_release: root.show_achievements()
 
         NavBar:

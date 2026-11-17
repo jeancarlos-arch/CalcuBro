@@ -89,6 +89,16 @@ class CalcScreen(Screen):
         self._just_evaluated = False
 
     def on_pre_enter(self, *args):
+        app = App.get_running_app()
+        if not self.grades_list and app and hasattr(app, 'data_store'):
+            store = app.data_store
+            if store.subjects:
+                self.load_from_subject(silent=True)
+            else:
+                self.grades_list = [
+                    {'n': 'Evaluación 1', 'g': 0.0, 'w': 50.0},
+                    {'n': 'Evaluación 2', 'g': 0.0, 'w': 50.0}
+                ]
         self.rebuild_grades_ui()
         self.calculate_results(silent=True)
 
@@ -247,7 +257,7 @@ class CalcScreen(Screen):
         self.calculate_results(silent=True)
         App.get_running_app().show_toast("Pesos repartidos equitativamente (100%)")
 
-    def load_from_subject(self):
+    def load_from_subject(self, silent=False):
         """Carga las materias o categorías configuradas en el DataStore."""
         app = App.get_running_app()
         if not app or not hasattr(app, 'data_store'):
@@ -255,7 +265,8 @@ class CalcScreen(Screen):
 
         store = app.data_store
         if not store.subjects:
-            app.show_toast("No tienes materias registradas en 'Mis materias'")
+            if not silent:
+                app.show_toast("No tienes materias registradas en 'Mis materias'")
             return
 
         new_list = []
@@ -282,8 +293,9 @@ class CalcScreen(Screen):
             self.grades_list = new_list
             self.rebuild_grades_ui()
             self.calculate_results(silent=True)
-            app.show_toast(f"Cargadas {len(new_list)} evaluaciones")
-        else:
+            if not silent:
+                app.show_toast(f"Cargadas {len(new_list)} evaluaciones")
+        elif not silent:
             app.show_toast("No hay evaluaciones disponibles en las materias")
 
     def rebuild_grades_ui(self):
@@ -293,7 +305,7 @@ class CalcScreen(Screen):
         container.clear_widgets()
 
         if not self.grades_list:
-            empty_box = BoxLayout(orientation='vertical', size_hint_y=None, height='90dp', padding=[14, 14], spacing=6)
+            empty_box = BoxLayout(orientation='vertical', size_hint_y=None, height='90dp', padding=[16, 14], spacing=6)
             with empty_box.canvas.before:
                 from kivy.graphics import Color, RoundedRectangle
                 Color(0.106, 0.149, 0.220, 0.6)
@@ -302,9 +314,11 @@ class CalcScreen(Screen):
                                size=lambda obj, val, r=r_c: setattr(r, 'size', val))
 
             lbl1 = Label(text="[b]No hay evaluaciones en la lista[/b]", markup=True,
-                         color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='22dp')
-            lbl2 = Label(text="Toca '[font=MaterialIcons]\\ue145[/font] Agregar nota' o '[font=MaterialIcons]\\ue865[/font] Cargar de materias' para comenzar.",
-                         markup=True, color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='20dp')
+                         color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='24dp', halign='left')
+            lbl1.bind(size=lbl1.setter('text_size'))
+            lbl2 = Label(text="Toca '[font=MaterialIcons][/font] Agregar nota' para comenzar.",
+                         markup=True, color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='28dp', halign='left')
+            lbl2.bind(size=lbl2.setter('text_size'))
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
             container.add_widget(empty_box)
@@ -338,15 +352,22 @@ class CalcScreen(Screen):
             txt_name.bind(text=lambda inst, val, i=idx: self.update_grade_val(i, 'n', val, is_str=True))
 
             btn_del = Button(
-                text="[font=MaterialIcons]\\ue872[/font] Eliminar",
+                text="[font=MaterialIcons][/font] Eliminar",
                 markup=True,
                 size_hint=(None, None),
                 size=('84dp', '30dp'),
                 background_normal='',
-                background_color=(0.173, 0.227, 0.322, 0.5),
+                background_down='',
+                background_color=(0, 0, 0, 0),
                 color=(0.949, 0.651, 0.353, 1),
                 font_size='12sp'
             )
+            with btn_del.canvas.before:
+                from kivy.graphics import Color as DelColor, RoundedRectangle as DelRect
+                DelColor(0.173, 0.227, 0.322, 0.6)
+                r_del = DelRect(pos=btn_del.pos, size=btn_del.size, radius=[8])
+                btn_del.bind(pos=lambda inst, val, r=r_del: setattr(r, 'pos', val),
+                             size=lambda inst, val, r=r_del: setattr(r, 'size', val))
             btn_del.bind(on_release=lambda x, i=idx: self.remove_grade(i))
 
             top_row.add_widget(txt_name)
@@ -409,14 +430,26 @@ class CalcScreen(Screen):
             else:
                 try:
                     val = float(val_text) if val_text else 0.0
-                    self.grades_list[index][field] = max(0.0, val)
+                    if field == 'w':
+                        val = min(100.0, max(0.0, val))
+                    elif field == 'g':
+                        val = max(0.0, val)
+                    self.grades_list[index][field] = val
                 except ValueError:
                     pass
             self.calculate_results(silent=True)
 
     def add_grade(self):
+        total_w = sum(x.get('w', 0.0) for x in self.grades_list)
+        avail_w = max(0.0, round(100.0 - total_w, 1))
+        if avail_w <= 0:
+            App.get_running_app().show_toast("Los pesos ya suman el 100%. Ajusta las notas anteriores.")
+            new_w = 0.0
+        else:
+            new_w = min(20.0, avail_w)
+
         new_name = f"Evaluación {len(self.grades_list) + 1}"
-        self.grades_list.append({'n': new_name, 'g': 0.0, 'w': 20.0})
+        self.grades_list.append({'n': new_name, 'g': 0.0, 'w': new_w})
         self.rebuild_grades_ui()
         self.calculate_results(silent=True)
 
