@@ -32,13 +32,13 @@ class ImportScreen(Screen):
 
         if self.current_step == 0:
             # Paso 0: Selección de archivo / foto
-            btn_gal = Button(text="[font=MaterialIcons]\\ue8a3[/font]   Elegir de la galería", markup=True,
+            btn_gal = Button(text="[font=MaterialIcons][/font]   Elegir de la galería", markup=True,
                              size_hint_y=None, height='54dp',
                              background_normal='', background_color=(0.106, 0.149, 0.220, 1),
                              color=(0.545, 0.718, 1.0, 1), bold=True, font_size='15sp')
             btn_gal.bind(on_release=lambda x: self.set_step(1))
 
-            btn_cam = Button(text="[font=MaterialIcons]\\ue412[/font]   Tomar una fotografía", markup=True,
+            btn_cam = Button(text="[font=MaterialIcons][/font]   Tomar una fotografía", markup=True,
                              size_hint_y=None, height='54dp',
                              background_normal='', background_color=(0.106, 0.149, 0.220, 1),
                              color=(0.545, 0.718, 1.0, 1), bold=True, font_size='15sp')
@@ -194,6 +194,7 @@ class ImportScreen(Screen):
                 store.schedule[day_idx].append({'n': name, 'h': hours, 'a': room})
                 store.schedule[day_idx].sort(key=lambda x: x.get('h', ''))
 
+        store.save_data()
         App.get_running_app().show_toast("Horario importado y guardado")
         App.get_running_app().go_screen('schedule', clear_history=True)
 

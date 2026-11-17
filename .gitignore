@@ -14,3 +14,7 @@ __pycache__/
 # Archivos de compilación de Kivy / Buildozer (si aplica más adelante)
 bin/
 *.spec
+
+# Datos locales
+calcubro_data.json
+studymate_data.json

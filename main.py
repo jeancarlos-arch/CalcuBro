@@ -63,27 +63,77 @@ GLOBAL_KV = """
     size_hint_y: None
     height: dp(46)
     background_normal: ''
-    background_color: (0.337, 0.537, 0.910, 1) # --bl
+    background_down: ''
+    background_color: (0, 0, 0, 0)
     color: (0.063, 0.094, 0.153, 1) # --bg
     bold: True
     font_size: '15sp'
+    canvas.before:
+        Color:
+            rgba: (0.27, 0.45, 0.80, 1) if self.state == 'down' else (0.337, 0.537, 0.910, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
 
 <GhostButton@Button>:
     size_hint_y: None
     height: dp(44)
     background_normal: ''
-    background_color: (0.106, 0.149, 0.220, 1) # --sf
+    background_down: ''
+    background_color: (0, 0, 0, 0)
     color: (0.545, 0.718, 1.0, 1) # --bl2
     bold: True
     font_size: '14sp'
+    canvas.before:
+        Color:
+            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+        Color:
+            rgba: (0.173, 0.227, 0.322, 0.9)
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <DangerButton@Button>:
     size_hint_y: None
     height: dp(42)
     background_normal: ''
-    background_color: (0.106, 0.149, 0.220, 1)
+    background_down: ''
+    background_color: (0, 0, 0, 0)
     color: (0.949, 0.651, 0.353, 1)
     font_size: '13sp'
+    canvas.before:
+        Color:
+            rgba: (0.173, 0.227, 0.322, 0.6) if self.state == 'down' else (0.106, 0.149, 0.220, 0.9)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(12)]
+        Color:
+            rgba: (0.949, 0.651, 0.353, 0.4)
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
+            width: dp(1)
+
+<ChipButton@Button>:
+    is_active: False
+    background_normal: ''
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    font_size: '12sp'
+    bold: True
+    color: (0.063, 0.094, 0.153, 1) if self.is_active else (0.627, 0.682, 0.753, 1)
+    canvas.before:
+        Color:
+            rgba: (0.337, 0.537, 0.910, 1) if self.is_active else (0.106, 0.149, 0.220, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(12)]
 
 <StyledTextInput@TextInput>:
     size_hint_y: None
@@ -91,11 +141,51 @@ GLOBAL_KV = """
     multiline: False
     background_normal: ''
     background_active: ''
-    background_color: (0.063, 0.094, 0.153, 1)
+    background_color: (0, 0, 0, 0)
     foreground_color: (0.957, 0.965, 0.980, 1)
     cursor_color: (0.545, 0.718, 1.0, 1)
     hint_text_color: (0.627, 0.682, 0.753, 0.6)
-    padding: [dp(10), dp(8)]
+    padding: [dp(12), dp(8)]
+    canvas.before:
+        Color:
+            rgba: (0.063, 0.094, 0.153, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(12)]
+        Color:
+            rgba: (0.337, 0.537, 0.910, 0.8) if self.focus else (0.173, 0.227, 0.322, 1)
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
+            width: dp(1)
+
+<RoundedSwitch@BoxLayout>:
+    active: False
+    on_active: pass
+    size_hint: (None, None)
+    size: (dp(52), dp(28))
+    padding: dp(2)
+    canvas.before:
+        Color:
+            rgba: (0.337, 0.537, 0.910, 1) if self.active else (0.173, 0.227, 0.322, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+    Widget:
+        size_hint: (None, None)
+        size: (dp(22), dp(22))
+        pos: (root.x + root.width - dp(24) if root.active else root.x + dp(2), root.y + dp(3))
+        canvas:
+            Color:
+                rgba: (0.957, 0.965, 0.980, 1) if root.active else (0.627, 0.682, 0.753, 1)
+            Ellipse:
+                pos: self.pos
+                size: self.size
+    Button:
+        background_color: (0, 0, 0, 0)
+        size_hint: (1, 1)
+        on_release: root.active = not root.active
 
 <CustomProgressBar@Widget>:
     value: 0
@@ -124,9 +214,22 @@ GLOBAL_KV = """
     halign: 'center'
     valign: 'middle'
     background_normal: ''
-    background_color: (0.106, 0.149, 0.220, 1)
+    background_down: ''
+    background_color: (0, 0, 0, 0)
     color: (0.545, 0.718, 1.0, 1)
     bold: True
+    canvas.before:
+        Color:
+            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+        Color:
+            rgba: (0.173, 0.227, 0.322, 0.5)
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <ProfileLinkCard@Button>:
     icon_text: ""
@@ -138,8 +241,16 @@ GLOBAL_KV = """
     size_hint_y: None
     height: dp(50)
     background_normal: ''
-    background_color: (0.106, 0.149, 0.220, 1)
+    background_down: ''
+    background_color: (0, 0, 0, 0)
     color: (0.957, 0.965, 0.980, 1)
+    canvas.before:
+        Color:
+            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
 
 <NavBar@BoxLayout>:
     size_hint_y: None
@@ -160,7 +271,7 @@ GLOBAL_KV = """
 
     Button:
         markup: True
-        text: f"[size=20sp][font=MaterialIcons]\\ue88a[/font][/size]\\n[size=10sp]Inicio[/size]"
+        text: f"[size=20sp][font=MaterialIcons][/font][/size]\\n[size=10sp]Inicio[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -171,7 +282,7 @@ GLOBAL_KV = """
 
     Button:
         markup: True
-        text: f"[size=20sp][font=MaterialIcons]\\ue865[/font][/size]\\n[size=10sp]Materias[/size]"
+        text: f"[size=20sp][font=MaterialIcons][/font][/size]\\n[size=10sp]Materias[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -182,7 +293,7 @@ GLOBAL_KV = """
 
     Button:
         markup: True
-        text: f"[size=20sp][font=MaterialIcons]\\ue878[/font][/size]\\n[size=10sp]Horario[/size]"
+        text: f"[size=20sp][font=MaterialIcons][/font][/size]\\n[size=10sp]Horario[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -193,7 +304,7 @@ GLOBAL_KV = """
 
     Button:
         markup: True
-        text: f"[size=20sp][font=MaterialIcons]\\uea5f[/font][/size]\\n[size=10sp]Calculadora[/size]"
+        text: f"[size=20sp][font=MaterialIcons][/font][/size]\\n[size=10sp]Calculadora[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
@@ -205,7 +316,10 @@ GLOBAL_KV = """
 
 
 class DataStore:
-    """Almacén central del estado académico de CalcuBro"""
+    """Almacén central del estado académico de CalcuBro con persistencia JSON"""
+    DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'calcubro_data.json')
+    LEGACY_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'studymate_data.json')
+
     def __init__(self):
         # Datos del perfil del estudiante
         self.student_name = ""
@@ -227,12 +341,56 @@ class DataStore:
         self.reminders = []
         self.diary_entries = []
         self.diary_questions = [
-            "1. ¿Qué aprendiste hoy en tus clases?",
-            "2. ¿Qué dificultades encontraste?",
-            "3. ¿Cuánto tiempo dedicaste al estudio?",
-            "4. ¿Qué pendientes tienes para mañana?",
-            "5. ¿Cuál fue tu principal logro hoy?"
+            "¿Cómo te fue hoy?",
+            "¿Qué aprendiste?",
+            "¿Qué te costó?",
+            "¿Qué quieres mejorar?",
+            "¿Cuál fue tu pequeño logro?"
         ]
+
+        # Cargar datos persistidos si existen
+        self.load_data()
+
+    def save_data(self):
+        """Guarda todo el estado en un archivo JSON local sin datos quemados."""
+        import json
+        payload = {
+            'student_name': self.student_name,
+            'student_career': self.student_career,
+            'student_semester': self.student_semester,
+            'is_logged_in': self.is_logged_in,
+            'subjects': self.subjects,
+            'schedule': self.schedule,
+            'global_notifications': self.global_notifications,
+            'reminders': self.reminders,
+            'diary_entries': self.diary_entries
+        }
+        try:
+            with open(self.DATA_FILE, 'w', encoding='utf-8') as f:
+                json.dump(payload, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"[DataStore] Error al guardar datos: {e}")
+
+    def load_data(self):
+        """Carga el estado previo desde el archivo JSON si existe."""
+        import json
+        target_path = self.DATA_FILE if os.path.exists(self.DATA_FILE) else (self.LEGACY_DATA_FILE if os.path.exists(self.LEGACY_DATA_FILE) else None)
+        if not target_path:
+            return
+        try:
+            with open(target_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            self.student_name = data.get('student_name', '')
+            self.student_career = data.get('student_career', '')
+            self.student_semester = data.get('student_semester', '')
+            self.is_logged_in = data.get('is_logged_in', bool(self.student_name))
+            self.subjects = data.get('subjects', [])
+            self.schedule = data.get('schedule', [[], [], [], [], []])
+            self.global_notifications = data.get('global_notifications', True)
+            self.reminders = data.get('reminders', [])
+            self.diary_entries = data.get('diary_entries', [])
+        except Exception as e:
+            print(f"[DataStore] Error al cargar datos: {e}")
 
     def get_active_subject_obj(self):
         for s in self.subjects:
@@ -252,7 +410,11 @@ class DataStore:
                 avg = sum(float(it['g']) for it in graded) / len(graded)
                 pts += avg * w / 100.0
                 ev += w
-        return {'pts': pts, 'ev': ev, 'tot': tot, 'pend': max(0.0, 100.0 - ev)}
+        # Garantizar que el porcentaje evaluado y total no excedan el 100%
+        ev_clamped = min(100.0, max(0.0, ev))
+        tot_clamped = min(100.0, max(0.0, tot))
+        pend_clamped = max(0.0, 100.0 - ev_clamped)
+        return {'pts': pts, 'ev': ev_clamped, 'tot': tot_clamped, 'pend': pend_clamped}
 
     def get_subject_avg(self, subj):
         cats = subj.get('categories', [])
@@ -264,8 +426,8 @@ class DataStore:
     def get_subject_progress(self, subj):
         cats = subj.get('categories', [])
         if cats:
-            return self.calc_categories_for(cats)['ev']
-        return float(subj.get('p', 0.0))
+            return min(100.0, max(0.0, self.calc_categories_for(cats)['ev']))
+        return min(100.0, max(0.0, float(subj.get('p', 0.0))))
 
     def get_general_avg(self):
         if not self.subjects:
@@ -273,6 +435,10 @@ class DataStore:
         return sum(self.get_subject_avg(s) for s in self.subjects) / len(self.subjects)
 
     def get_general_adv(self):
+        if not self.subjects:
+            return 0.0
+        adv = sum(self.get_subject_progress(s) for s in self.subjects) / len(self.subjects)
+        return min(100.0, max(0.0, adv))
         if not self.subjects:
             return 0.0
         return sum(self.get_subject_progress(s) for s in self.subjects) / len(self.subjects)

@@ -1,3 +1,4 @@
+import datetime
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -6,6 +7,62 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.modalview import ModalView
 from kivy.properties import NumericProperty, StringProperty
 from kivy.app import App
+
+SPANISH_MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+
+def make_rounded_btn(text, bg_rgba, text_rgba=(0.063, 0.094, 0.153, 1), height='44dp', radius=14, bold=True):
+    btn = Button(
+        text=text,
+        size_hint_y=None,
+        height=height,
+        background_normal='',
+        background_down='',
+        background_color=(0, 0, 0, 0),
+        color=text_rgba,
+        bold=bold,
+        font_size='14sp'
+    )
+    with btn.canvas.before:
+        from kivy.graphics import Color, RoundedRectangle
+        Color(*bg_rgba)
+        r = RoundedRectangle(pos=btn.pos, size=btn.size, radius=[radius])
+        btn.bind(pos=lambda inst, val, rect=r: setattr(rect, 'pos', val),
+                 size=lambda inst, val, rect=r: setattr(rect, 'size', val))
+    return btn
+
+
+def make_rounded_input(text="", height='68dp', multiline=True, hint_text=""):
+    """Crea un campo de texto moderno con bordes redondeados y tema oscuro."""
+    from kivy.metrics import dp
+    txt = TextInput(
+        text=text,
+        hint_text=hint_text,
+        multiline=multiline,
+        size_hint_y=None,
+        height=height,
+        background_normal='',
+        background_active='',
+        background_color=(0, 0, 0, 0),
+        foreground_color=(0.957, 0.965, 0.980, 1),
+        cursor_color=(0.545, 0.718, 1.0, 1),
+        hint_text_color=(0.627, 0.682, 0.753, 0.5),
+        padding=[dp(12), dp(10)],
+        font_size='13sp'
+    )
+    with txt.canvas.before:
+        from kivy.graphics import Color, RoundedRectangle, Line
+        Color(0.106, 0.149, 0.220, 1)
+        r = RoundedRectangle(pos=txt.pos, size=txt.size, radius=[dp(12)])
+        Color(0.173, 0.227, 0.322, 0.9)
+        l = Line(rounded_rectangle=[txt.x, txt.y, txt.width, txt.height, dp(12)], width=dp(1))
+
+        def _update(obj, val, _r=r, _l=l):
+            _r.pos = obj.pos
+            _r.size = obj.size
+            _l.rounded_rectangle = [obj.x, obj.y, obj.width, obj.height, dp(12)]
+
+        txt.bind(pos=_update, size=_update)
+    return txt
 
 
 class DiaryEntryModal(ModalView):
@@ -40,22 +97,19 @@ class DiaryEntryModal(ModalView):
             root.add_widget(Label(text=q, color=(0.627, 0.682, 0.753, 1), font_size='12sp',
                                   size_hint_y=None, height='20dp', halign='left'))
             ans = entry.get('v', [])[i] if i < len(entry.get('v', [])) else ''
-            txt = TextInput(text=ans, multiline=True, size_hint_y=None, height='64dp')
+            txt = make_rounded_input(text=ans, height='64dp', multiline=True)
             self.inputs.append(txt)
             root.add_widget(txt)
 
-        btn_save = Button(text="Guardar cambios", size_hint_y=None, height='44dp', background_normal='',
-                          background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True)
+        btn_save = make_rounded_btn("Guardar cambios", (0.337, 0.537, 0.910, 1), (0.063, 0.094, 0.153, 1), height='44dp')
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
 
-        btn_del = Button(text="Eliminar entrada", size_hint_y=None, height='40dp', background_normal='',
-                         background_color=(0.106, 0.149, 0.220, 1), color=(0.949, 0.651, 0.353, 1))
+        btn_del = make_rounded_btn("Eliminar entrada", (0.106, 0.149, 0.220, 1), (0.949, 0.651, 0.353, 1), height='40dp', bold=False)
         btn_del.bind(on_release=self.delete)
         root.add_widget(btn_del)
 
-        btn_cancel = Button(text="Cancelar", size_hint_y=None, height='40dp', background_normal='',
-                            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1))
+        btn_cancel = make_rounded_btn("Cancelar", (0.106, 0.149, 0.220, 1), (0.545, 0.718, 1.0, 1), height='40dp', bold=False)
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
 
@@ -74,7 +128,8 @@ class DiaryEntryModal(ModalView):
 
 class DiaryScreen(Screen):
     active_tab = NumericProperty(0)  # 0: Nueva entrada, 1: Historial
-    history_tab_title = StringProperty("Historial (2)")
+    history_tab_title = StringProperty("Historial (0)")
+    today_diary_title = StringProperty("Tu diario de hoy")
 
     def on_pre_enter(self, *args):
         self.refresh_diary_view()
@@ -92,6 +147,11 @@ class DiaryScreen(Screen):
         entries = store.diary_entries
         self.history_tab_title = f"Historial ({len(entries)})"
 
+        t = datetime.date.today()
+        day_names = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+        month_names = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+        self.today_diary_title = f"{day_names[t.weekday()]} {t.day} de {month_names[t.month-1]} de {t.year}"
+
         container = self.ids.get('diary_container')
         if not container:
             return
@@ -104,14 +164,12 @@ class DiaryScreen(Screen):
                 lbl = Label(text=q, color=(0.627, 0.682, 0.753, 1), font_size='12sp',
                             size_hint_y=None, height='24dp', halign='left', valign='bottom')
                 lbl.bind(size=lbl.setter('text_size'))
-                txt = TextInput(multiline=True, size_hint_y=None, height='68dp')
+                txt = make_rounded_input(height='68dp', multiline=True, hint_text="Escribe aquí tu reflexión...")
                 self.input_widgets.append(txt)
                 container.add_widget(lbl)
                 container.add_widget(txt)
 
-            btn_save = Button(text="Guardar entrada", size_hint_y=None, height='46dp',
-                              background_normal='', background_color=(0.337, 0.537, 0.910, 1),
-                              color=(0.063, 0.094, 0.153, 1), bold=True, font_size='15sp')
+            btn_save = make_rounded_btn("Guardar entrada", (0.337, 0.537, 0.910, 1), (0.063, 0.094, 0.153, 1), height='46dp', radius=14)
             btn_save.bind(on_release=lambda x: self.save_new_entry())
             container.add_widget(btn_save)
 
@@ -136,7 +194,7 @@ class DiaryScreen(Screen):
                 lbl_date = Label(text=f"[b]{entry.get('d', '')}[/b]", markup=True, halign='left',
                                  color=(0.957, 0.965, 0.980, 1), font_size='14sp')
                 lbl_date.bind(size=lbl_date.setter('text_size'))
-                lbl_icon = Label(text="\ue3c9", font_name='MaterialIcons', color=(0.545, 0.718, 1.0, 1), size_hint_x=None, width='24dp', font_size='16sp')
+                lbl_icon = Label(text="", font_name='MaterialIcons', color=(0.545, 0.718, 1.0, 1), size_hint_x=None, width='24dp', font_size='16sp')
                 row_t.add_widget(lbl_date)
                 row_t.add_widget(lbl_icon)
 
@@ -170,8 +228,13 @@ class DiaryScreen(Screen):
             return
 
         store = App.get_running_app().data_store
-        new_entry = {'d': 'Hoy · 2 nov 2026', 'v': answers}
+        t = datetime.date.today()
+        month_name = SPANISH_MONTHS[t.month - 1]
+        date_str = f"Hoy · {t.day} {month_name} {t.year}"
+
+        new_entry = {'d': date_str, 'v': answers}
         store.diary_entries.insert(0, new_entry)
+        store.save_data()
 
         App.get_running_app().show_toast("Entrada guardada")
         self.set_tab(1)
@@ -188,6 +251,7 @@ class DiaryScreen(Screen):
         store = App.get_running_app().data_store
         if entry_index < len(store.diary_entries):
             store.diary_entries[entry_index]['v'] = new_values
+            store.save_data()
         self.refresh_diary_view()
         App.get_running_app().show_toast("Cambios guardados")
 
@@ -195,5 +259,6 @@ class DiaryScreen(Screen):
         store = App.get_running_app().data_store
         if entry_index < len(store.diary_entries):
             store.diary_entries.pop(entry_index)
+            store.save_data()
         self.refresh_diary_view()
         App.get_running_app().show_toast("Entrada eliminada")

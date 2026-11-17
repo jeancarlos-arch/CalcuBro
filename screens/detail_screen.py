@@ -9,6 +9,27 @@ from kivy.properties import StringProperty, NumericProperty
 from kivy.app import App
 
 
+def make_rounded_btn(text, bg_rgba, text_rgba=(0.063, 0.094, 0.153, 1), height='44dp', radius=14, bold=True):
+    btn = Button(
+        text=text,
+        size_hint_y=None,
+        height=height,
+        background_normal='',
+        background_down='',
+        background_color=(0, 0, 0, 0),
+        color=text_rgba,
+        bold=bold,
+        font_size='14sp'
+    )
+    with btn.canvas.before:
+        from kivy.graphics import Color, RoundedRectangle
+        Color(*bg_rgba)
+        r = RoundedRectangle(pos=btn.pos, size=btn.size, radius=[radius])
+        btn.bind(pos=lambda inst, val, rect=r: setattr(rect, 'pos', val),
+                 size=lambda inst, val, rect=r: setattr(rect, 'size', val))
+    return btn
+
+
 class EvaluationModal(ModalView):
     def __init__(self, categories, category_index, item_index, on_save_cb, on_delete_cb=None, **kwargs):
         super().__init__(**kwargs)
@@ -71,26 +92,17 @@ class EvaluationModal(ModalView):
         root.add_widget(self.txt_grade)
 
         # Botón Guardar
-        btn_save = Button(
-            text="Guardar evaluación", size_hint_y=None, height='44dp', background_normal='',
-            background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True
-        )
+        btn_save = make_rounded_btn("Guardar evaluación", (0.337, 0.537, 0.910, 1), (0.063, 0.094, 0.153, 1), height='44dp')
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
 
         # Botón Eliminar si es edición
         if item_index >= 0:
-            btn_del = Button(
-                text="Eliminar evaluación", size_hint_y=None, height='38dp', background_normal='',
-                background_color=(0.173, 0.227, 0.322, 0.7), color=(0.949, 0.651, 0.353, 1)
-            )
+            btn_del = make_rounded_btn("Eliminar evaluación", (0.173, 0.227, 0.322, 0.7), (0.949, 0.651, 0.353, 1), height='38dp', bold=False)
             btn_del.bind(on_release=self.delete)
             root.add_widget(btn_del)
 
-        btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp', background_normal='',
-            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1)
-        )
+        btn_cancel = make_rounded_btn("Cancelar", (0.106, 0.149, 0.220, 1), (0.545, 0.718, 1.0, 1), height='38dp', bold=False)
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
 
@@ -130,12 +142,15 @@ class EvaluationModal(ModalView):
 
 
 class CategoryModal(ModalView):
-    def __init__(self, on_save_cb, **kwargs):
+    def __init__(self, current_total_weight=0.0, on_save_cb=None, **kwargs):
         super().__init__(**kwargs)
-        self.size_hint = (0.9, 0.58)
+        self.size_hint = (0.9, 0.6)
         self.auto_dismiss = True
         self.background_color = (0, 0, 0, 0.75)
+        self.current_total_weight = float(current_total_weight)
         self.on_save_cb = on_save_cb
+
+        avail = max(0.0, round(100.0 - self.current_total_weight, 1))
 
         root = BoxLayout(orientation='vertical', padding=16, spacing=10)
         with root.canvas.before:
@@ -155,25 +170,24 @@ class CategoryModal(ModalView):
         )
         root.add_widget(self.txt_name)
 
-        root.add_widget(Label(text="Peso en la nota final (%) *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        lbl_w = Label(
+            text=f"Peso en la nota final (%) *  [color=39c98a](Disponible: {avail:.1f}%)[/color]",
+            markup=True, size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1), font_size='12sp'
+        )
+        root.add_widget(lbl_w)
+
         self.txt_weight = TextInput(
-            hint_text="Ej: 30", multiline=False, size_hint_y=None, height='38dp', input_filter='float',
+            hint_text=f"Máx {avail:.1f}", multiline=False, size_hint_y=None, height='38dp', input_filter='float',
             background_normal='', background_color=(0.063, 0.094, 0.153, 1),
             foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
         )
         root.add_widget(self.txt_weight)
 
-        btn_create = Button(
-            text="Crear categoría", size_hint_y=None, height='44dp', background_normal='',
-            background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True
-        )
+        btn_create = make_rounded_btn("Crear categoría", (0.337, 0.537, 0.910, 1), (0.063, 0.094, 0.153, 1), height='44dp')
         btn_create.bind(on_release=self.create_cat)
         root.add_widget(btn_create)
 
-        btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp', background_normal='',
-            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1)
-        )
+        btn_cancel = make_rounded_btn("Cancelar", (0.106, 0.149, 0.220, 1), (0.545, 0.718, 1.0, 1), height='38dp', bold=False)
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
 
@@ -192,7 +206,12 @@ class CategoryModal(ModalView):
             w = 0.0
 
         if w <= 0:
-            app.show_toast("El peso porcentual debe ser mayor a 0")
+            app.show_toast("El peso porcentual debe ser mayor a 0%")
+            return
+
+        avail = max(0.0, round(100.0 - self.current_total_weight, 1))
+        if w > avail:
+            app.show_toast(f"No puede superar 100%. Solo queda {avail:.1f}% disponible")
             return
 
         self.on_save_cb(name, w)
@@ -275,8 +294,10 @@ class DetailScreen(Screen):
 
             lbl1 = Label(text="[b]Sin categorías de evaluación todavía[/b]", markup=True,
                          color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='24dp')
+            lbl1.bind(size=lbl1.setter('text_size'))
             lbl2 = Label(text="Pulsa '+ Nueva categoría' para definir cómo se divide tu nota (ej. Parciales 50%, Deberes 20%, Proyecto 30%).",
-                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='32dp')
+                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='42dp')
+            lbl2.bind(size=lbl2.setter('text_size'))
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
             container.add_widget(empty_box)
@@ -303,7 +324,7 @@ class DetailScreen(Screen):
             lbl_h.bind(size=lbl_h.setter('text_size'))
 
             btn_del_cat = Button(
-                text="\ue5cd", font_name='MaterialIcons', size_hint=(None, None), size=('26dp', '26dp'),
+                text="", font_name='MaterialIcons', size_hint=(None, None), size=('26dp', '26dp'),
                 background_normal='', background_color=(0, 0, 0, 0),
                 color=(0.949, 0.651, 0.353, 1), font_size='16sp'
             )
@@ -323,12 +344,12 @@ class DetailScreen(Screen):
                     row = BoxLayout(size_hint_y=None, height='36dp', spacing=10)
                     g_val = it.get('g')
                     g_display = f"{float(g_val):.2f}" if g_val is not None else "[color=a0aec0]Pendiente[/color]"
-                    btn_row = Button(
-                        text=f"  {it.get('n', '')}   [font=MaterialIcons]\\ue5c8[/font]   {g_display}", markup=True,
-                        halign='left', valign='middle', background_normal='',
-                        background_color=(0.063, 0.094, 0.153, 0.7), color=(0.957, 0.965, 0.980, 1),
-                        font_size='13sp'
+                    btn_row = make_rounded_btn(
+                        f"  {it.get('n', '')}   [font=MaterialIcons][/font]   {g_display}",
+                        (0.063, 0.094, 0.153, 0.8), (0.957, 0.965, 0.980, 1),
+                        height='36dp', radius=10, bold=False
                     )
+                    btn_row.markup = True
                     btn_row.bind(on_release=lambda instance, ci=c_idx, ii=it_idx: self.open_evaluation_modal(ci, ii))
                     row.add_widget(btn_row)
                     cat_box.add_widget(row)
@@ -342,6 +363,7 @@ class DetailScreen(Screen):
             subj = self.get_current_subject()
             if subj:
                 subj['pgoal'] = val
+                App.get_running_app().data_store.save_data()
             self.refresh_detail()
         except ValueError:
             pass
@@ -353,6 +375,7 @@ class DetailScreen(Screen):
             subj = self.get_current_subject()
             if subj:
                 subj['pmin'] = val
+                App.get_running_app().data_store.save_data()
             self.refresh_detail()
         except ValueError:
             pass
@@ -362,6 +385,7 @@ class DetailScreen(Screen):
         subj = self.get_current_subject()
         if subj:
             subj['teacher'] = text
+            App.get_running_app().data_store.save_data()
 
     def open_evaluation_modal(self, category_index=0, item_index=-1):
         subj = self.get_current_subject()
@@ -394,6 +418,7 @@ class DetailScreen(Screen):
         if 0 <= target_cat_idx < len(categories):
             categories[target_cat_idx].setdefault('it', []).append(new_item)
 
+        App.get_running_app().data_store.save_data()
         self.refresh_detail()
         App.get_running_app().show_toast(f"Evaluación '{name}' guardada")
 
@@ -408,6 +433,7 @@ class DetailScreen(Screen):
             if 0 <= item_idx < len(items):
                 name = items[item_idx].get('n', '')
                 items.pop(item_idx)
+                App.get_running_app().data_store.save_data()
                 App.get_running_app().show_toast(f"Evaluación '{name}' eliminada")
 
         self.refresh_detail()
@@ -417,12 +443,22 @@ class DetailScreen(Screen):
         if not subj:
             App.get_running_app().show_toast("No hay materia seleccionada")
             return
-        modal = CategoryModal(on_save_cb=self.create_category)
+        current_sum = sum(float(c.get('w', 0)) for c in subj.get('categories', []))
+        if current_sum >= 100.0:
+            App.get_running_app().show_toast("Los rubros de esta materia ya alcanzan el 100%")
+            return
+        modal = CategoryModal(current_total_weight=current_sum, on_save_cb=self.create_category)
         modal.open()
 
     def create_category(self, name, weight):
         subj = self.get_current_subject()
         if not subj:
+            return
+
+        current_sum = sum(float(c.get('w', 0)) for c in subj.get('categories', []))
+        if current_sum + weight > 100.0:
+            avail = max(0.0, 100.0 - current_sum)
+            App.get_running_app().show_toast(f"No puede superar 100%. Disponible: {avail:.1f}%")
             return
 
         subj.setdefault('categories', []).append({
@@ -431,6 +467,7 @@ class DetailScreen(Screen):
             'm': 'a',
             'it': []
         })
+        App.get_running_app().data_store.save_data()
         self.refresh_detail()
         App.get_running_app().show_toast(f"Categoría '{name}' ({weight}%) creada")
 
@@ -443,5 +480,6 @@ class DetailScreen(Screen):
         if 0 <= cat_idx < len(categories):
             cat_name = categories[cat_idx].get('n', '')
             categories.pop(cat_idx)
+            App.get_running_app().data_store.save_data()
             self.refresh_detail()
             App.get_running_app().show_toast(f"Categoría '{cat_name}' eliminada")

@@ -22,7 +22,7 @@
 
                 # Botón Volver
                 Button:
-                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    text: "[font=MaterialIcons][/font]  Volver"
                     markup: True
                     size_hint: (None, None)
                     size: ('90dp', '32dp')
@@ -150,8 +150,8 @@
                         halign: 'left'
                         valign: 'middle'
                         size_hint_y: None
-                        height: '24dp'
-                        text_size: self.size
+                        height: '32dp'
+                        text_size: self.width, None
 
                     Label:
                         text: f"[color=f2a65a]{root.min_status_text}[/color]"
@@ -160,8 +160,8 @@
                         halign: 'left'
                         valign: 'middle'
                         size_hint_y: None
-                        height: '24dp'
-                        text_size: self.size
+                        height: '32dp'
+                        text_size: self.width, None
 
                 # Contenedor dinámico de categorías
                 BoxLayout:
@@ -173,11 +173,13 @@
 
                 # Botones de acción
                 PrimaryButton:
-                    text: "+ Registrar evaluación"
+                    text: "[font=MaterialIcons][/font]  Registrar evaluación"
+                    markup: True
                     on_release: root.open_evaluation_modal(0, -1)
 
                 GhostButton:
-                    text: "+ Nueva categoría"
+                    text: "[font=MaterialIcons][/font]  Nueva categoría"
+                    markup: True
                     on_release: root.open_new_category_modal()
 
         NavBar:

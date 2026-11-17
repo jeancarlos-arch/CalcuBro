@@ -22,7 +22,7 @@
 
                 # Encabezado
                 Label:
-                    text: "[b]Horario semanal[/b]"
+                    text: "[font=MaterialIcons][/font]  [b]Horario semanal[/b]"
                     markup: True
                     font_size: '24sp'
                     color: (0.957, 0.965, 0.980, 1)
@@ -37,7 +37,7 @@
                     size_hint_y: None
                     height: '36dp'
                     Button:
-                        text: "\ue5cb"
+                        text: ""
                         font_name: 'MaterialIcons'
                         font_size: '22sp'
                         size_hint_x: None
@@ -56,7 +56,7 @@
                         valign: 'middle'
 
                     Button:
-                        text: "\ue5cc"
+                        text: ""
                         font_name: 'MaterialIcons'
                         font_size: '22sp'
                         size_hint_x: None
@@ -73,53 +73,93 @@
                     spacing: 6
 
                     Button:
-                        text: "Lun\n2"
+                        text: root.d0_text
                         font_size: '12sp'
                         halign: 'center'
                         background_normal: ''
-                        background_color: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 0 else (0.106, 0.149, 0.220, 1)
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
                         color: (0.063, 0.094, 0.153, 1) if root.current_day_idx == 0 else (0.627, 0.682, 0.753, 1)
                         bold: True
+                        canvas.before:
+                            Color:
+                                rgba: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 0 else (0.106, 0.149, 0.220, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(12)]
                         on_release: root.select_day(0)
 
                     Button:
-                        text: "Mar\n3"
+                        text: root.d1_text
                         font_size: '12sp'
                         halign: 'center'
                         background_normal: ''
-                        background_color: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 1 else (0.106, 0.149, 0.220, 1)
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
                         color: (0.063, 0.094, 0.153, 1) if root.current_day_idx == 1 else (0.627, 0.682, 0.753, 1)
                         bold: True
+                        canvas.before:
+                            Color:
+                                rgba: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 1 else (0.106, 0.149, 0.220, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(12)]
                         on_release: root.select_day(1)
 
                     Button:
-                        text: "Mié\n4"
+                        text: root.d2_text
                         font_size: '12sp'
                         halign: 'center'
                         background_normal: ''
-                        background_color: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 2 else (0.106, 0.149, 0.220, 1)
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
                         color: (0.063, 0.094, 0.153, 1) if root.current_day_idx == 2 else (0.627, 0.682, 0.753, 1)
                         bold: True
+                        canvas.before:
+                            Color:
+                                rgba: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 2 else (0.106, 0.149, 0.220, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(12)]
                         on_release: root.select_day(2)
 
                     Button:
-                        text: "Jue\n5"
+                        text: root.d3_text
                         font_size: '12sp'
                         halign: 'center'
                         background_normal: ''
-                        background_color: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 3 else (0.106, 0.149, 0.220, 1)
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
                         color: (0.063, 0.094, 0.153, 1) if root.current_day_idx == 3 else (0.627, 0.682, 0.753, 1)
                         bold: True
+                        canvas.before:
+                            Color:
+                                rgba: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 3 else (0.106, 0.149, 0.220, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(12)]
                         on_release: root.select_day(3)
 
                     Button:
-                        text: "Vie\n6"
+                        text: root.d4_text
                         font_size: '12sp'
                         halign: 'center'
                         background_normal: ''
-                        background_color: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 4 else (0.106, 0.149, 0.220, 1)
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
                         color: (0.063, 0.094, 0.153, 1) if root.current_day_idx == 4 else (0.627, 0.682, 0.753, 1)
                         bold: True
+                        canvas.before:
+                            Color:
+                                rgba: (0.337, 0.537, 0.910, 1) if root.current_day_idx == 4 else (0.106, 0.149, 0.220, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(12)]
                         on_release: root.select_day(4)
 
                 # Contenedor de clases
@@ -132,20 +172,34 @@
 
                 # Botón Agregar Clase
                 GhostButton:
-                    text: "+ Agregar clase"
+                    text: "[font=MaterialIcons][/font]  Agregar clase"
+                    markup: True
                     on_release: root.open_class_modal(-1)
 
-                # Botón Importar Foto con estilo especial
+                # Botón Importar Foto con estilo redondeado y borde sutil
                 Button:
                     size_hint_y: None
                     height: '56dp'
                     background_normal: ''
-                    background_color: (0.106, 0.149, 0.220, 1)
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
                     color: (0.545, 0.718, 1.0, 1)
                     bold: True
-                    text: "[size=18sp][font=MaterialIcons]\\ue412[/font][/size]   Importar foto del horario\n[size=11sp][color=a0aec0]Reconocimiento automático y revisión[/color][/size]"
+                    text: "[size=18sp][font=MaterialIcons][/font][/size]   Importar foto del horario\n[size=11sp][color=a0aec0]Reconocimiento automático y revisión[/color][/size]"
                     markup: True
                     halign: 'center'
+                    canvas.before:
+                        Color:
+                            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(14)]
+                        Color:
+                            rgba: (0.337, 0.537, 0.910, 0.6)
+                        Line:
+                            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+                            width: dp(1)
                     on_release: root.go_import()
 
                 # Tarjeta Notificaciones de clase
@@ -159,10 +213,10 @@
                             font_size: '14sp'
                             halign: 'left'
                             text_size: self.size
-                        Switch:
+                        RoundedSwitch:
                             active: root.class_reminder_active
-                            size_hint_x: None
-                            width: '80dp'
+                            size_hint: (None, None)
+                            size: ('52dp', '28dp')
                             on_active: root.toggle_reminder()
 
                     Label:
@@ -172,7 +226,7 @@
                         halign: 'left'
                         valign: 'middle'
                         size_hint_y: None
-                        height: '20dp'
-                        text_size: self.size
+                        height: '28dp'
+                        text_size: self.width, None
 
         NavBar:

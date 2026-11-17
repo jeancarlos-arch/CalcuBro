@@ -8,6 +8,27 @@ from kivy.properties import StringProperty
 from kivy.app import App
 
 
+def make_rounded_btn(text, bg_rgba, text_rgba=(0.063, 0.094, 0.153, 1), height='44dp', radius=14, bold=True):
+    btn = Button(
+        text=text,
+        size_hint_y=None,
+        height=height,
+        background_normal='',
+        background_down='',
+        background_color=(0, 0, 0, 0),
+        color=text_rgba,
+        bold=bold,
+        font_size='14sp'
+    )
+    with btn.canvas.before:
+        from kivy.graphics import Color, RoundedRectangle
+        Color(*bg_rgba)
+        r = RoundedRectangle(pos=btn.pos, size=btn.size, radius=[radius])
+        btn.bind(pos=lambda inst, val, rect=r: setattr(rect, 'pos', val),
+                 size=lambda inst, val, rect=r: setattr(rect, 'size', val))
+    return btn
+
+
 class SubjectModal(ModalView):
     def __init__(self, subject_index=-1, on_save_cb=None, on_delete_cb=None, **kwargs):
         super().__init__(**kwargs)
@@ -84,29 +105,17 @@ class SubjectModal(ModalView):
         root.add_widget(grades_row)
 
         # Botón Guardar
-        btn_save = Button(
-            text="Guardar materia", size_hint_y=None, height='44dp',
-            background_normal='', background_color=(0.337, 0.537, 0.910, 1),
-            color=(0.063, 0.094, 0.153, 1), bold=True
-        )
+        btn_save = make_rounded_btn("Guardar materia", (0.337, 0.537, 0.910, 1), (0.063, 0.094, 0.153, 1), height='44dp')
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
 
         # Botón Eliminar si es edición
         if subject_index >= 0:
-            btn_del = Button(
-                text="Eliminar materia", size_hint_y=None, height='38dp',
-                background_normal='', background_color=(0.173, 0.227, 0.322, 0.7),
-                color=(0.949, 0.651, 0.353, 1)
-            )
+            btn_del = make_rounded_btn("Eliminar materia", (0.173, 0.227, 0.322, 0.7), (0.949, 0.651, 0.353, 1), height='38dp', bold=False)
             btn_del.bind(on_release=self.delete)
             root.add_widget(btn_del)
 
-        btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.106, 0.149, 0.220, 1),
-            color=(0.545, 0.718, 1.0, 1)
-        )
+        btn_cancel = make_rounded_btn("Cancelar", (0.106, 0.149, 0.220, 1), (0.545, 0.718, 1.0, 1), height='38dp', bold=False)
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
 
@@ -173,8 +182,10 @@ class SubjectsScreen(Screen):
 
             lbl1 = Label(text="[b]Aún no has registrado materias[/b]", markup=True,
                          color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='24dp')
+            lbl1.bind(size=lbl1.setter('text_size'))
             lbl2 = Label(text="Toca '+ Agregar materia' para comenzar a organizar tus notas y horario.",
-                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='20dp')
+                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='36dp')
+            lbl2.bind(size=lbl2.setter('text_size'))
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
             container.add_widget(empty_box)
@@ -207,7 +218,7 @@ class SubjectsScreen(Screen):
             lbl_grade.bind(size=lbl_grade.setter('text_size'))
 
             btn_edit = Button(
-                text="\ue3c9", font_name='MaterialIcons', size_hint=(None, None), size=('30dp', '28dp'),
+                text="", font_name='MaterialIcons', size_hint=(None, None), size=('30dp', '28dp'),
                 background_normal='', background_color=(0, 0, 0, 0), font_size='16sp',
                 color=(0.545, 0.718, 1.0, 1)
             )
@@ -298,6 +309,7 @@ class SubjectsScreen(Screen):
             store.subjects.append(new_subj)
             App.get_running_app().show_toast(f"Materia '{name}' creada")
 
+        store.save_data()
         self.refresh_subjects()
 
     def delete_subject(self, idx):
@@ -305,5 +317,6 @@ class SubjectsScreen(Screen):
         if 0 <= idx < len(store.subjects):
             name = store.subjects[idx].get('n', '')
             store.subjects.pop(idx)
+            store.save_data()
             App.get_running_app().show_toast(f"Materia '{name}' eliminada")
         self.refresh_subjects()

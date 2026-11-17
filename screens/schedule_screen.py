@@ -9,6 +9,24 @@ from kivy.properties import StringProperty, NumericProperty, BooleanProperty
 from kivy.app import App
 
 
+def make_rounded_btn(text, bg_color, text_color, height='44dp', bold=True):
+    """Crea un botón con esquinas redondeadas usando canvas."""
+    from kivy.metrics import dp
+    btn = Button(
+        text=text, size_hint_y=None, height=height,
+        background_normal='', background_down='',
+        background_color=(0, 0, 0, 0),
+        color=text_color, bold=bold, font_size='14sp'
+    )
+    from kivy.graphics import Color, RoundedRectangle
+    with btn.canvas.before:
+        c = Color(*bg_color)
+        r = RoundedRectangle(pos=btn.pos, size=btn.size, radius=[dp(12)])
+        btn.bind(pos=lambda obj, val, _r=r: setattr(_r, 'pos', val),
+                 size=lambda obj, val, _r=r: setattr(_r, 'size', val))
+    return btn
+
+
 class ClassModal(ModalView):
     def __init__(self, day_index, class_index, on_save_cb, on_delete_cb=None, **kwargs):
         super().__init__(**kwargs)
@@ -78,25 +96,16 @@ class ClassModal(ModalView):
         )
         root.add_widget(self.txt_room)
 
-        btn_save = Button(
-            text="Guardar clase", size_hint_y=None, height='44dp', background_normal='',
-            background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True
-        )
+        btn_save = make_rounded_btn("Guardar clase", (0.337, 0.537, 0.910, 1), (0.063, 0.094, 0.153, 1), height='44dp')
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
 
         if class_index >= 0:
-            btn_del = Button(
-                text="Eliminar clase", size_hint_y=None, height='38dp', background_normal='',
-                background_color=(0.173, 0.227, 0.322, 0.7), color=(0.949, 0.651, 0.353, 1)
-            )
+            btn_del = make_rounded_btn("Eliminar clase", (0.173, 0.227, 0.322, 0.7), (0.949, 0.651, 0.353, 1), height='38dp', bold=False)
             btn_del.bind(on_release=self.delete)
             root.add_widget(btn_del)
 
-        btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp', background_normal='',
-            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1)
-        )
+        btn_cancel = make_rounded_btn("Cancelar", (0.106, 0.149, 0.220, 1), (0.545, 0.718, 1.0, 1), height='38dp', bold=False)
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
 
@@ -120,31 +129,59 @@ class ClassModal(ModalView):
         self.dismiss()
 
 
+import datetime
+
+SPANISH_MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+
 class ScheduleScreen(Screen):
     week_offset = NumericProperty(0)
     current_day_idx = NumericProperty(0)  # 0: Lun, 1: Mar, 2: Mié, 3: Jue, 4: Vie
     week_range_text = StringProperty("Horario Semanal")
     class_reminder_active = BooleanProperty(True)
 
+    d0_text = StringProperty("Lun")
+    d1_text = StringProperty("Mar")
+    d2_text = StringProperty("Mié")
+    d3_text = StringProperty("Jue")
+    d4_text = StringProperty("Vie")
+
     day_names = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
 
     def on_pre_enter(self, *args):
+        # Seleccionar por defecto el día de hoy si es de lunes a viernes
+        today_wd = datetime.date.today().weekday()
+        if today_wd < 5 and self.week_offset == 0:
+            self.current_day_idx = today_wd
         self.update_week_text()
         self.refresh_classes()
 
     def update_week_text(self):
-        day_name = self.day_names[self.current_day_idx] if 0 <= self.current_day_idx < len(self.day_names) else "Semana"
-        self.week_range_text = f"Día: {day_name}"
+        today = datetime.date.today()
+        # Lunes de la semana seleccionada
+        monday = today - datetime.timedelta(days=today.weekday()) + datetime.timedelta(weeks=self.week_offset)
+        friday = monday + datetime.timedelta(days=4)
+
+        m_m = SPANISH_MONTHS[monday.month - 1]
+        f_m = SPANISH_MONTHS[friday.month - 1]
+        self.week_range_text = f"{monday.day} {m_m} – {friday.day} {f_m} {friday.year}"
+
+        labels = ["Lun", "Mar", "Mié", "Jue", "Vie"]
+        for i in range(5):
+            d_date = monday + datetime.timedelta(days=i)
+            setattr(self, f"d{i}_text", f"{labels[i]}\n{d_date.day}")
 
     def prev_week(self):
-        self.select_day((self.current_day_idx - 1) % 5)
+        self.week_offset -= 1
+        self.update_week_text()
+        self.refresh_classes()
 
     def next_week(self):
-        self.select_day((self.current_day_idx + 1) % 5)
+        self.week_offset += 1
+        self.update_week_text()
+        self.refresh_classes()
 
     def select_day(self, day_index):
         self.current_day_idx = day_index
-        self.update_week_text()
         self.refresh_classes()
 
     def refresh_classes(self):
@@ -175,14 +212,25 @@ class ScheduleScreen(Screen):
             day_name = self.day_names[self.current_day_idx]
             lbl1 = Label(text=f"[b]Sin clases programadas para el {day_name}[/b]", markup=True,
                          color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='24dp')
+            lbl1.bind(size=lbl1.setter('text_size'))
             lbl2 = Label(text="Toca '+ Agregar clase' para registrar tu horario de este día.",
-                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='20dp')
+                         color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='36dp')
+            lbl2.bind(size=lbl2.setter('text_size'))
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
             container.add_widget(empty_box)
             return
 
+        is_today = (self.week_offset == 0 and self.current_day_idx == datetime.date.today().weekday())
+
         for idx, c in enumerate(classes):
+            tag_text = ""
+            if is_today:
+                if idx == 0:
+                    tag_text = " [color=39c98a]· En curso[/color]"
+                elif idx == 1:
+                    tag_text = " [color=8bb7ff]· Próxima[/color]"
+
             card = BoxLayout(orientation='vertical', size_hint_y=None, height='86dp', padding=[14, 10], spacing=4)
             with card.canvas.before:
                 from kivy.graphics import Color, RoundedRectangle
@@ -192,7 +240,7 @@ class ScheduleScreen(Screen):
                           size=lambda obj, val, r=r_bg: setattr(r, 'size', val))
 
             top_row = BoxLayout(size_hint_y=None, height='20dp')
-            lbl_time = Label(text=f"[font=MaterialIcons]\\ue192[/font]  {c.get('h', '')}", markup=True,
+            lbl_time = Label(text=f"[font=MaterialIcons][/font]  {c.get('h', '')}{tag_text}", markup=True,
                              color=(0.545, 0.718, 1.0, 1), font_size='12sp',
                              halign='left', valign='middle')
             lbl_time.bind(size=lbl_time.setter('text_size'))
@@ -202,7 +250,7 @@ class ScheduleScreen(Screen):
                              font_size='15sp', halign='left', valign='middle', size_hint_y=None, height='24dp')
             lbl_name.bind(size=lbl_name.setter('text_size'))
 
-            room_str = f"[font=MaterialIcons]\\ue0c8[/font]  Aula: {c.get('a', '')}" if c.get('a') else "[font=MaterialIcons]\\ue0c8[/font]  Aula no especificada"
+            room_str = f"[font=MaterialIcons][/font]  Aula: {c.get('a', '')}" if c.get('a') else "[font=MaterialIcons][/font]  Aula no especificada"
             lbl_room = Label(text=room_str, markup=True, color=(0.627, 0.682, 0.753, 1),
                              font_size='12sp', halign='left', valign='middle', size_hint_y=None, height='18dp')
             lbl_room.bind(size=lbl_room.setter('text_size'))
@@ -237,6 +285,7 @@ class ScheduleScreen(Screen):
             else:
                 store.schedule[day_idx].append(new_class)
             store.schedule[day_idx].sort(key=lambda x: x.get('h', ''))
+        store.save_data()
         self.refresh_classes()
         App.get_running_app().show_toast("Clase guardada")
 
@@ -244,6 +293,7 @@ class ScheduleScreen(Screen):
         store = App.get_running_app().data_store
         if 0 <= day_idx < len(store.schedule) and 0 <= class_idx < len(store.schedule[day_idx]):
             store.schedule[day_idx].pop(class_idx)
+            store.save_data()
         self.refresh_classes()
         App.get_running_app().show_toast("Clase eliminada")
 

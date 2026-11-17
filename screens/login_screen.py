@@ -32,6 +32,7 @@ class LoginScreen(Screen):
         store.student_career = career
         store.student_semester = semester
         store.is_logged_in = True
+        store.save_data()
 
         first_name = name.split()[0]
         app.show_toast(f"¡Bienvenido/a, {first_name}!")

@@ -22,7 +22,7 @@
 
                 # Botón Volver
                 Button:
-                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    text: "[font=MaterialIcons][/font]  Volver"
                     markup: True
                     size_hint: (None, None)
                     size: ('90dp', '32dp')
@@ -35,7 +35,7 @@
 
                 # Encabezado
                 Label:
-                    text: "[b]Recordatorios[/b]"
+                    text: "[font=MaterialIcons][/font]  [b]Recordatorios[/b]"
                     markup: True
                     font_size: '24sp'
                     color: (0.957, 0.965, 0.980, 1)
@@ -62,6 +62,11 @@
                     size_hint_y: None
                     height: self.minimum_height
                     spacing: 8
+
+                GhostButton:
+                    text: "[font=MaterialIcons][/font]  Agregar recordatorio"
+                    markup: True
+                    on_release: root.open_new_reminder_modal()
 
                 Label:
                     text: "Toca un elemento para configurar su recordatorio."

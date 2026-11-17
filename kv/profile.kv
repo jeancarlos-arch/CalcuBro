@@ -75,27 +75,27 @@
 
                 # Enlaces de Navegación
                 ProfileLinkCard:
-                    icon_text: "\ue3c9"
+                    icon_text: ""
                     link_title: "Editar datos de estudiante / Login"
                     on_release: root.navigate('login')
 
                 ProfileLinkCard:
-                    icon_text: "\ue7f4"
+                    icon_text: ""
                     link_title: "Recordatorios"
                     on_release: root.navigate('remind')
 
                 ProfileLinkCard:
-                    icon_text: "\ue26b"
+                    icon_text: ""
                     link_title: "Progreso"
                     on_release: root.navigate('progress')
 
                 ProfileLinkCard:
-                    icon_text: "\ue8cd"
+                    icon_text: ""
                     link_title: "Diario personal"
                     on_release: root.navigate('diary')
 
                 ProfileLinkCard:
-                    icon_text: "\uea5f"
+                    icon_text: ""
                     link_title: "Calculadora"
                     on_release: root.navigate('calc')
 
@@ -109,10 +109,8 @@
                             font_size: '14sp'
                             halign: 'left'
                             text_size: self.size
-                        Switch:
+                        RoundedSwitch:
                             active: root.notifications_enabled
-                            size_hint_x: None
-                            width: '80dp'
                             on_active: root.toggle_notifications(self.active)
 
         NavBar:
