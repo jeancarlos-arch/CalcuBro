@@ -11,7 +11,8 @@ from kivy.app import App
 class SubjectModal(ModalView):
     def __init__(self, subject_index=-1, on_save_cb=None, on_delete_cb=None, **kwargs):
         super().__init__(**kwargs)
-        self.size_hint = (0.9, 0.7)
+        # Reducimos la altura de 0.82 a 0.68 para que no quede tanto espacio vacío
+        self.size_hint = (0.88, 0.68)
         self.auto_dismiss = True
         self.background_color = (0, 0, 0, 0.75)
         self.subject_index = subject_index
@@ -23,58 +24,85 @@ class SubjectModal(ModalView):
         if 0 <= subject_index < len(store.subjects):
             subj_data = store.subjects[subject_index]
 
-        root = BoxLayout(orientation='vertical', padding=16, spacing=10)
+        # Padding y spacing más compactos
+        root = BoxLayout(orientation='vertical', padding=[18, 14, 18, 14], spacing=8)
         with root.canvas.before:
             from kivy.graphics import Color, RoundedRectangle
             Color(0.106, 0.149, 0.220, 1)
-            rect = RoundedRectangle(pos=root.pos, size=root.size, radius=[14])
+            rect = RoundedRectangle(pos=root.pos, size=root.size, radius=[16])
             root.bind(pos=lambda obj, val: setattr(rect, 'pos', val),
                       size=lambda obj, val: setattr(rect, 'size', val))
 
+        # Icono superior decorativo (más proporcionado)
+        root.add_widget(Label(
+            text="\ue865",
+            font_name='MaterialIcons',
+            font_size='28sp',
+            color=(0.545, 0.718, 1.0, 1),
+            size_hint_y=None,
+            height='30dp',
+            halign='center',
+            valign='middle'
+        ))
+
         title = "Editar materia" if subject_index >= 0 else "Nueva materia"
-        root.add_widget(Label(text=f"[b]{title}[/b]", markup=True, font_size='18sp', size_hint_y=None, height='32dp'))
+        root.add_widget(Label(
+            text=f"[b]{title}[/b]", 
+            markup=True, 
+            font_size='17sp', 
+            size_hint_y=None, 
+            height='24dp', 
+            color=(0.957, 0.965, 0.980, 1),
+            halign='center'
+        ))
 
         # Nombre de la materia
-        root.add_widget(Label(text="Nombre de la materia *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Nombre de la materia", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_name = TextInput(
             text=str(subj_data.get('n', '')),
             hint_text="Ej: Cálculo Diferencial",
             multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_name)
 
         # Docente
-        root.add_widget(Label(text="Docente (opcional)", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Docente (opcional)", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_teacher = TextInput(
             text=str(subj_data.get('teacher', '')),
             hint_text="Ej: Ing. Morales",
             multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_teacher)
 
         # Fila: Nota mínima y Meta
-        grades_row = BoxLayout(size_hint_y=None, height='60dp', spacing=10)
+        grades_row = BoxLayout(size_hint_y=None, height='56dp', spacing=10)
 
         b_min = BoxLayout(orientation='vertical', spacing=2)
-        b_min.add_widget(Label(text="Nota mínima", size_hint_y=None, height='18dp', color=(0.627, 0.682, 0.753, 1), font_size='11sp'))
+        b_min.add_widget(Label(text="Nota mínima", size_hint_y=None, height='14dp', color=(0.8, 0.84, 0.9, 1), font_size='11sp', halign='left'))
         self.txt_min = TextInput(
             text=str(subj_data.get('pmin', 7.0)),
             multiline=False, input_filter='float', size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
             foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
         )
         b_min.add_widget(self.txt_min)
 
         b_goal = BoxLayout(orientation='vertical', spacing=2)
-        b_goal.add_widget(Label(text="Meta deseada", size_hint_y=None, height='18dp', color=(0.627, 0.682, 0.753, 1), font_size='11sp'))
+        b_goal.add_widget(Label(text="Meta deseada", size_hint_y=None, height='14dp', color=(0.8, 0.84, 0.9, 1), font_size='11sp', halign='left'))
         self.txt_goal = TextInput(
             text=str(subj_data.get('pgoal', 8.5)),
             multiline=False, input_filter='float', size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
             foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
         )
         b_goal.add_widget(self.txt_goal)
@@ -85,9 +113,9 @@ class SubjectModal(ModalView):
 
         # Botón Guardar
         btn_save = Button(
-            text="Guardar materia", size_hint_y=None, height='44dp',
+            text="Guardar materia", size_hint_y=None, height='40dp',
             background_normal='', background_color=(0.337, 0.537, 0.910, 1),
-            color=(0.063, 0.094, 0.153, 1), bold=True
+            color=(1, 1, 1, 1), bold=True, font_size='13sp'
         )
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
@@ -95,17 +123,17 @@ class SubjectModal(ModalView):
         # Botón Eliminar si es edición
         if subject_index >= 0:
             btn_del = Button(
-                text="Eliminar materia", size_hint_y=None, height='38dp',
+                text="Eliminar materia", size_hint_y=None, height='34dp',
                 background_normal='', background_color=(0.173, 0.227, 0.322, 0.7),
-                color=(0.949, 0.651, 0.353, 1)
+                color=(0.949, 0.651, 0.353, 1), font_size='12sp'
             )
             btn_del.bind(on_release=self.delete)
             root.add_widget(btn_del)
 
         btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.106, 0.149, 0.220, 1),
-            color=(0.545, 0.718, 1.0, 1)
+            text="Cancelar", size_hint_y=None, height='32dp',
+            background_normal='', background_color=(0, 0, 0, 0),
+            color=(0.627, 0.682, 0.753, 1), font_size='12sp'
         )
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
@@ -195,7 +223,6 @@ class SubjectsScreen(Screen):
                 card.bind(pos=lambda obj, val, r=rect: setattr(r, 'pos', val),
                           size=lambda obj, val, r=rect: setattr(r, 'size', val))
 
-            # Fila superior: Nombre, botón editar y Nota
             top_row = BoxLayout(size_hint_y=None, height='28dp', spacing=6)
             lbl_name = Label(text=f"[b]{name}[/b]", markup=True, halign='left', valign='middle',
                              color=(0.957, 0.965, 0.980, 1), font_size='15sp')
@@ -217,13 +244,11 @@ class SubjectsScreen(Screen):
             top_row.add_widget(btn_edit)
             top_row.add_widget(lbl_grade)
 
-            # Subtítulo: Docente o Evaluado %
             sub_info = f"{teacher} · {evaluated:.0f}% evaluado" if teacher else f"Promedio actual · {evaluated:.0f}% evaluado"
             lbl_sub = Label(text=sub_info, halign='left', valign='middle',
                             color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='18dp')
             lbl_sub.bind(size=lbl_sub.setter('text_size'))
 
-            # Barra de progreso
             from kivy.uix.widget import Widget
             bar = Widget(size_hint_y=None, height='6dp')
             with bar.canvas:
@@ -245,7 +270,6 @@ class SubjectsScreen(Screen):
             card.add_widget(lbl_sub)
             card.add_widget(bar)
 
-            # Wrapper interactivo para abrir detalle
             from kivy.uix.relativelayout import RelativeLayout
             rl = RelativeLayout(size_hint_y=None, height='100dp')
             btn_wrapper = Button(background_color=(0, 0, 0, 0), size_hint=(1, 1))
@@ -253,7 +277,6 @@ class SubjectsScreen(Screen):
             rl.add_widget(card)
             rl.add_widget(btn_wrapper)
 
-            # Volver a poner el botón de editar al frente para que reciba click
             btn_edit_overlay = Button(
                 text="", size_hint=(None, None), size=('34dp', '34dp'),
                 pos_hint={'right': 0.85, 'top': 0.95},
@@ -280,14 +303,12 @@ class SubjectsScreen(Screen):
     def save_subject(self, idx, name, teacher, pmin, pgoal):
         store = App.get_running_app().data_store
         if idx >= 0 and idx < len(store.subjects):
-            # Editar materia existente
             store.subjects[idx]['n'] = name
             store.subjects[idx]['teacher'] = teacher
             store.subjects[idx]['pmin'] = pmin
             store.subjects[idx]['pgoal'] = pgoal
             App.get_running_app().show_toast(f"Materia '{name}' actualizada")
         else:
-            # Nueva materia
             new_subj = {
                 'n': name,
                 'teacher': teacher,

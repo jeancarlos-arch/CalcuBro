@@ -280,12 +280,12 @@ class DataStore:
     def calc_need(self, goal, pts, pend, max_score=10.0):
         if pend <= 0:
             if pts >= goal:
-                return ('ok', 'Meta alcanzada con tu nota final')
-            return ('wa', 'No quedan evaluaciones y la meta no se alcanzó')
+                return ('ok', '¡Meta alcanzada con éxito!')
+            return ('wa', 'No alcanzado (semestre finalizado)')
 
         n = (goal - pts) / (pend / 100.0)
         if n > max_score:
-            return ('wa', f'Meta no alcanzable: necesitarías {n:.2f} y el máximo es {max_score:.1f}')
+            return ('wa', f'No alcanzable: necesitarías {n:.2f} (máx {max_score:.1f})')
         if n <= 0:
             return ('ok', '¡Meta asegurada! Ya la alcanzaste')
         return ('ok', f'Necesitas {n:.2f} en el {pend:.0f}% pendiente')

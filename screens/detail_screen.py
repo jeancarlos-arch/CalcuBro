@@ -12,7 +12,7 @@ from kivy.app import App
 class EvaluationModal(ModalView):
     def __init__(self, categories, category_index, item_index, on_save_cb, on_delete_cb=None, **kwargs):
         super().__init__(**kwargs)
-        self.size_hint = (0.9, 0.72)
+        self.size_hint = (0.88, 0.76)
         self.auto_dismiss = True
         self.background_color = (0, 0, 0, 0.75)
 
@@ -28,7 +28,7 @@ class EvaluationModal(ModalView):
             if 0 <= item_index < len(items):
                 item_data = items[item_index]
 
-        root = BoxLayout(orientation='vertical', padding=16, spacing=10)
+        root = BoxLayout(orientation='vertical', padding=[18, 14, 18, 14], spacing=8)
         with root.canvas.before:
             from kivy.graphics import Color, RoundedRectangle
             Color(0.106, 0.149, 0.220, 1)
@@ -36,44 +36,76 @@ class EvaluationModal(ModalView):
             root.bind(pos=lambda obj, val: setattr(rect, 'pos', val),
                       size=lambda obj, val: setattr(rect, 'size', val))
 
+        # Icono superior decorativo
+        root.add_widget(Label(
+            text="\ue873",
+            font_name='MaterialIcons',
+            font_size='28sp',
+            color=(0.545, 0.718, 1.0, 1),
+            size_hint_y=None,
+            height='30dp',
+            halign='center',
+            valign='middle'
+        ))
+
         title_text = "Editar evaluación" if item_index >= 0 else "Registrar evaluación"
-        root.add_widget(Label(text=f"[b]{title_text}[/b]", markup=True, font_size='18sp', size_hint_y=None, height='32dp'))
+        root.add_widget(Label(
+            text=f"[b]{title_text}[/b]", 
+            markup=True, 
+            font_size='17sp', 
+            size_hint_y=None, 
+            height='24dp', 
+            color=(0.957, 0.965, 0.980, 1),
+            halign='center'
+        ))
 
         # Selector de Categoría
-        root.add_widget(Label(text="Categoría / Rubro", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Categoría / Rubro", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         cat_names = [c.get('n', f'Categoría {i+1}') for i, c in enumerate(self.categories)]
         default_cat = cat_names[category_index] if 0 <= category_index < len(cat_names) else (cat_names[0] if cat_names else 'Sin categorías')
-        self.sp_cat = Spinner(text=default_cat, values=cat_names, size_hint_y=None, height='38dp')
+        self.sp_cat = Spinner(
+            text=default_cat, 
+            values=cat_names, 
+            size_hint_y=None, 
+            height='38dp',
+            background_normal='',
+            background_color=(0.12, 0.16, 0.24, 1),
+            color=(0.9, 0.93, 0.96, 1)
+        )
         root.add_widget(self.sp_cat)
 
         # Nombre de evaluación
-        root.add_widget(Label(text="Nombre de la evaluación *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Nombre de la evaluación", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_name = TextInput(
             text=str(item_data.get('n', '')),
             hint_text="Ej: Deber 1, Examen Parcial",
             multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_name)
 
         # Nota
-        root.add_widget(Label(text="Nota obtenida (deja vacío si aún está pendiente)", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Nota obtenida (deja vacío si está pendiente)", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         current_g = item_data.get('g')
         grade_str = "" if current_g is None else str(current_g)
         self.txt_grade = TextInput(
             text=grade_str,
             hint_text="Ej: 8.5 (o vacío)",
             multiline=False, size_hint_y=None, height='38dp', input_filter='float',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_grade)
 
         # Botón Guardar
         btn_save = Button(
-            text="Guardar evaluación", size_hint_y=None, height='44dp', background_normal='',
-            background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True
+            text="Guardar evaluación", size_hint_y=None, height='40dp', background_normal='',
+            background_color=(0.337, 0.537, 0.910, 1), color=(1, 1, 1, 1), bold=True, font_size='13sp'
         )
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
@@ -81,15 +113,15 @@ class EvaluationModal(ModalView):
         # Botón Eliminar si es edición
         if item_index >= 0:
             btn_del = Button(
-                text="Eliminar evaluación", size_hint_y=None, height='38dp', background_normal='',
-                background_color=(0.173, 0.227, 0.322, 0.7), color=(0.949, 0.651, 0.353, 1)
+                text="Eliminar evaluación", size_hint_y=None, height='34dp', background_normal='',
+                background_color=(0.173, 0.227, 0.322, 0.7), color=(0.949, 0.651, 0.353, 1), font_size='12sp'
             )
             btn_del.bind(on_release=self.delete)
             root.add_widget(btn_del)
 
         btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp', background_normal='',
-            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1)
+            text="Cancelar", size_hint_y=None, height='32dp', background_normal='',
+            background_color=(0, 0, 0, 0), color=(0.627, 0.682, 0.753, 1), font_size='12sp'
         )
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
@@ -132,12 +164,12 @@ class EvaluationModal(ModalView):
 class CategoryModal(ModalView):
     def __init__(self, on_save_cb, **kwargs):
         super().__init__(**kwargs)
-        self.size_hint = (0.9, 0.58)
+        self.size_hint = (0.88, 0.62)
         self.auto_dismiss = True
         self.background_color = (0, 0, 0, 0.75)
         self.on_save_cb = on_save_cb
 
-        root = BoxLayout(orientation='vertical', padding=16, spacing=10)
+        root = BoxLayout(orientation='vertical', padding=[18, 14, 18, 14], spacing=8)
         with root.canvas.before:
             from kivy.graphics import Color, RoundedRectangle
             Color(0.106, 0.149, 0.220, 1)
@@ -145,34 +177,58 @@ class CategoryModal(ModalView):
             root.bind(pos=lambda obj, val: setattr(rect, 'pos', val),
                       size=lambda obj, val: setattr(rect, 'size', val))
 
-        root.add_widget(Label(text="[b]Nueva categoría / Rubro[/b]", markup=True, font_size='18sp', size_hint_y=None, height='32dp'))
+        # Icono superior decorativo
+        root.add_widget(Label(
+            text="\ue2c7",
+            font_name='MaterialIcons',
+            font_size='28sp',
+            color=(0.545, 0.718, 1.0, 1),
+            size_hint_y=None,
+            height='30dp',
+            halign='center',
+            valign='middle'
+        ))
 
-        root.add_widget(Label(text="Nombre del rubro *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(
+            text="[b]Nueva categoría / Rubro[/b]", 
+            markup=True, 
+            font_size='17sp', 
+            size_hint_y=None, 
+            height='24dp', 
+            color=(0.957, 0.965, 0.980, 1),
+            halign='center'
+        ))
+
+        root.add_widget(Label(text="Nombre del rubro", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_name = TextInput(
             hint_text="Ej: Parciales, Deberes, Talleres, Proyecto", multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_name)
 
-        root.add_widget(Label(text="Peso en la nota final (%) *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Peso en la nota final (%)", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_weight = TextInput(
             hint_text="Ej: 30", multiline=False, size_hint_y=None, height='38dp', input_filter='float',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_weight)
 
         btn_create = Button(
-            text="Crear categoría", size_hint_y=None, height='44dp', background_normal='',
-            background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True
+            text="Crear categoría", size_hint_y=None, height='40dp', background_normal='',
+            background_color=(0.337, 0.537, 0.910, 1), color=(1, 1, 1, 1), bold=True, font_size='13sp'
         )
         btn_create.bind(on_release=self.create_cat)
         root.add_widget(btn_create)
 
         btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp', background_normal='',
-            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1)
+            text="Cancelar", size_hint_y=None, height='32dp', background_normal='',
+            background_color=(0, 0, 0, 0), color=(0.627, 0.682, 0.753, 1), font_size='12sp'
         )
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
@@ -258,11 +314,15 @@ class DetailScreen(Screen):
         self.evaluated_percent = pc['ev']
         self.pending_percent = pc['pend']
 
-        # Proyecciones
-        _, g_msg = store.calc_need(self.goal_note, pc['pts'], pc['pend'], 10.0)
-        _, m_msg = store.calc_need(self.min_note, pc['pts'], pc['pend'], 10.0)
-        self.goal_status_text = f"Objetivo ({self.goal_note:.1f}): {g_msg}"
-        self.min_status_text = f"Para aprobar ({self.min_note:.1f}): {m_msg}"
+        # Proyecciones dinámicas con colores independientes
+        g_status, g_msg = store.calc_need(self.goal_note, pc['pts'], pc['pend'], 10.0)
+        m_status, m_msg = store.calc_need(self.min_note, pc['pts'], pc['pend'], 10.0)
+
+        g_color = "39c98a" if g_status == 'ok' else "f2a65a"
+        m_color = "39c98a" if m_status == 'ok' else "f2a65a"
+
+        self.goal_status_text = f"[color={g_color}]Objetivo ({self.goal_note:.1f}): {g_msg}[/color]"
+        self.min_status_text = f"[color={m_color}]Para aprobar ({self.min_note:.1f}): {m_msg}[/color]"
 
         if not categories:
             empty_box = BoxLayout(orientation='vertical', size_hint_y=None, height='100dp', padding=[16, 16], spacing=6)
@@ -275,7 +335,7 @@ class DetailScreen(Screen):
 
             lbl1 = Label(text="[b]Sin categorías de evaluación todavía[/b]", markup=True,
                          color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='24dp')
-            lbl2 = Label(text="Pulsa '+ Nueva categoría' para definir cómo se divide tu nota (ej. Parciales 50%, Deberes 20%, Proyecto 30%).",
+            lbl2 = Label(text="Pulsa '+ Nueva categoría' para definir cómo se divide tu nota.",
                          color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='32dp')
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
@@ -292,7 +352,6 @@ class DetailScreen(Screen):
                 cat_box.bind(pos=lambda obj, val, r=r_cat: setattr(r, 'pos', val),
                              size=lambda obj, val, r=r_cat: setattr(r, 'size', val))
 
-            # Fila de Encabezado de categoría con botón para borrar categoría
             header_row = BoxLayout(size_hint_y=None, height='28dp', spacing=6)
             cat_items = cat.get('it', [])
             graded = [it for it in cat_items if it.get('g') is not None]

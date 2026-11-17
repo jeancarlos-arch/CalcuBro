@@ -3,44 +3,29 @@ from kivy.app import App
 
 
 class LoginScreen(Screen):
-    def on_pre_enter(self, *args):
+    def navigate(self, screen_name):
         app = App.get_running_app()
-        if not app or not hasattr(app, 'data_store'):
-            return
-        store = app.data_store
+        if app:
+            app.go_screen(screen_name)
 
-        # Cargar valores actuales en los campos si ya fueron asignados
-        if 'input_name' in self.ids and store.student_name:
-            self.ids.input_name.text = store.student_name
-        if 'input_career' in self.ids and store.student_career:
-            self.ids.input_career.text = store.student_career
-        if 'input_semester' in self.ids and store.student_semester:
-            self.ids.input_semester.text = store.student_semester
-
-    def submit_login(self):
+    def save_data(self):
         app = App.get_running_app()
-        name = self.ids.input_name.text.strip() if 'input_name' in self.ids else ""
-        career = self.ids.input_career.text.strip() if 'input_career' in self.ids else ""
-        semester = self.ids.input_semester.text.strip() if 'input_semester' in self.ids else ""
-
-        if not name:
-            app.show_toast("Por favor ingresa tu nombre")
-            return
-
-        store = app.data_store
-        store.student_name = name
-        store.student_career = career
-        store.student_semester = semester
-        store.is_logged_in = True
-
-        first_name = name.split()[0]
-        app.show_toast(f"¡Bienvenido/a, {first_name}!")
-        app.go_screen('home', clear_history=True)
-
-    def skip_login(self):
-        app = App.get_running_app()
-        app.go_screen('home', clear_history=True)
-
-    def go_back(self):
-        app = App.get_running_app()
-        app.go_back()
+        if app and hasattr(app, 'data_store'):
+            store = app.data_store
+            
+            # Capturamos nombre y carrera de forma segura
+            if 'name_input' in self.ids:
+                store.student_name = self.ids.name_input.text.strip()
+            if 'career_input' in self.ids:
+                store.student_career = self.ids.career_input.text.strip()
+            
+            # Capturamos el semestre seleccionado del Spinner
+            if 'semester_spinner' in self.ids:
+                sem = self.ids.semester_spinner.text
+                store.student_semester = "" if sem == "Selecciona tu semestre" else sem
+            
+            if hasattr(app, 'show_toast'):
+                app.show_toast("¡Datos guardados con éxito!")
+        
+        if app:
+            app.go_screen('home')

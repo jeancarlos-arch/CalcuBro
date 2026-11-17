@@ -1,4 +1,5 @@
 #:kivy 2.3.0
+#:import dp kivy.metrics.dp
 
 <ProfileScreen>:
     name: 'profile'
@@ -11,108 +12,144 @@
                 pos: self.pos
                 size: self.size
 
+        # Encabezado superior
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            padding: [dp(16), dp(8)]
+            spacing: dp(8)
+
+            Button:
+                text: "< Volver"
+                size_hint_x: None
+                width: dp(80)
+                background_normal: ''
+                background_color: 0, 0, 0, 0
+                color: (0.545, 0.718, 1.0, 1)
+                font_size: '14sp'
+                on_release: root.navigate('home')
+
+            Label:
+                text: "[b]Mi Perfil[/b]"
+                markup: True
+                font_size: '18sp'
+                color: (0.957, 0.965, 0.980, 1)
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size
+
         ScrollView:
             do_scroll_x: False
+            bar_width: dp(3)
+
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                padding: [20, 16]
-                spacing: 12
+                padding: [dp(20), dp(10), dp(20), dp(20)]
+                spacing: dp(16)
 
-                # Encabezado
-                Label:
-                    text: "[b]Perfil[/b]"
-                    markup: True
-                    font_size: '24sp'
-                    color: (0.957, 0.965, 0.980, 1)
-                    halign: 'left'
-                    valign: 'middle'
-                    size_hint_y: None
-                    height: '32dp'
-                    text_size: self.size
-
-                # Tarjeta de Usuario
+                # Tarjeta de Identidad del Estudiante
                 DarkCard:
+                    spacing: dp(12)
+                    padding: dp(20)
+
                     BoxLayout:
                         size_hint_y: None
-                        height: '56dp'
-                        spacing: 14
+                        height: dp(70)
+                        spacing: dp(16)
 
-                        # Avatar Circular
-                        Label:
-                            text: root.avatar_initial
-                            font_name: 'MaterialIcons' if root.avatar_is_icon else 'Roboto'
-                            font_size: '26sp' if root.avatar_is_icon else '22sp'
-                            bold: True
-                            color: (0.063, 0.094, 0.153, 1)
-                            size_hint: (None, None)
-                            size: ('50dp', '50dp')
+                        # Círculo de Avatar (Muestra icono o la inicial del nombre)
+                        BoxLayout:
+                            size_hint: None, None
+                            size: dp(60), dp(60)
                             canvas.before:
                                 Color:
                                     rgba: (0.337, 0.537, 0.910, 1)
-                                Ellipse:
+                                RoundedRectangle:
                                     pos: self.pos
                                     size: self.size
+                                    radius: [dp(30)]
+                            Label:
+                                text: root.avatar_initial
+                                font_name: 'MaterialIcons' if root.avatar_is_icon else 'Roboto'
+                                font_size: '28sp' if root.avatar_is_icon else '22sp'
+                                bold: not root.avatar_is_icon
+                                color: (1, 1, 1, 1)
+                                halign: 'center'
+                                valign: 'middle'
+                                text_size: self.size
 
                         BoxLayout:
                             orientation: 'vertical'
-                            spacing: 2
+                            spacing: dp(4)
+
                             Label:
                                 text: f"[b]{root.user_name}[/b]"
                                 markup: True
-                                font_size: '16sp'
+                                font_size: '18sp'
+                                color: (0.957, 0.965, 0.980, 1)
                                 halign: 'left'
-                                valign: 'middle'
+                                valign: 'bottom'
                                 text_size: self.size
+
                             Label:
                                 text: root.user_career_sem
-                                color: (0.627, 0.682, 0.753, 1)
                                 font_size: '12sp'
+                                color: (0.627, 0.682, 0.753, 1)
                                 halign: 'left'
-                                valign: 'middle'
+                                valign: 'top'
                                 text_size: self.size
 
-                # Enlaces de Navegación
-                ProfileLinkCard:
-                    icon_text: "\ue3c9"
-                    link_title: "Editar datos de estudiante / Login"
-                    on_release: root.navigate('login')
+                    PrimaryButton:
+                        text: "Actualizar datos académicos"
+                        on_release: root.navigate('login')
 
-                ProfileLinkCard:
-                    icon_text: "\ue7f4"
-                    link_title: "Recordatorios"
-                    on_release: root.navigate('remind')
+                # Sección de Preferencias
+                Label:
+                    text: "[b]Preferencias[/b]"
+                    markup: True
+                    font_size: '14sp'
+                    color: (0.627, 0.682, 0.753, 1)
+                    size_hint_y: None
+                    height: dp(24)
+                    halign: 'left'
+                    text_size: self.size
 
-                ProfileLinkCard:
-                    icon_text: "\ue26b"
-                    link_title: "Progreso"
-                    on_release: root.navigate('progress')
-
-                ProfileLinkCard:
-                    icon_text: "\ue8cd"
-                    link_title: "Diario personal"
-                    on_release: root.navigate('diary')
-
-                ProfileLinkCard:
-                    icon_text: "\uea5f"
-                    link_title: "Calculadora"
-                    on_release: root.navigate('calc')
-
-                # Ajuste de Notificaciones
                 DarkCard:
+                    spacing: dp(12)
+                    
                     BoxLayout:
                         size_hint_y: None
-                        height: '36dp'
+                        height: dp(40)
                         Label:
-                            text: "Notificaciones del sistema"
+                            text: "Notificaciones generales"
                             font_size: '14sp'
+                            color: (0.957, 0.965, 0.980, 1)
                             halign: 'left'
+                            valign: 'middle'
                             text_size: self.size
                         Switch:
                             active: root.notifications_enabled
+                            size_hint_y: None
+                            height: dp(30)
                             size_hint_x: None
-                            width: '80dp'
+                            width: dp(60)
                             on_active: root.toggle_notifications(self.active)
+
+                # Enlace limpio "Acerca de CalcuBro" con icono corregido
+                Button:
+                    text: "    [font=MaterialIcons]\ue88f[/font]    Acerca de CalcuBro"
+                    markup: True
+                    halign: 'left'
+                    valign: 'middle'
+                    font_size: '14sp'
+                    size_hint_y: None
+                    height: dp(48)
+                    background_normal: ''
+                    background_color: (0.106, 0.149, 0.220, 1)
+                    color: (0.957, 0.965, 0.980, 1)
+                    text_size: self.width, self.height
+                    on_release: app.show_toast("CalcuBro v1.0 - Asistente Académico")
 
         NavBar:

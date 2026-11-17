@@ -4,12 +4,28 @@
     name: 'login'
     BoxLayout:
         orientation: 'vertical'
+        padding: 24
+        spacing: 16
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: (0.063, 0.094, 0.153, 1) # Fondo principal (--bg)
             Rectangle:
                 pos: self.pos
                 size: self.size
+
+        # Botón Volver superior
+        BoxLayout:
+            size_hint_y: None
+            height: '40dp'
+            Button:
+                text: "Volver"
+                font_size: '14sp'
+                color: (0.337, 0.537, 0.910, 1)
+                background_color: 0, 0, 0, 0
+                size_hint_x: None
+                width: '60dp'
+                on_release: root.navigate('home')
+            Widget:
 
         ScrollView:
             do_scroll_x: False
@@ -17,147 +33,143 @@
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                padding: [24, 20]
-                spacing: 14
+                spacing: 20
+                padding: [0, 10]
 
-                # Botón Volver
-                Button:
-                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
-                    markup: True
-                    size_hint: (None, None)
-                    size: ('90dp', '32dp')
-                    background_normal: ''
-                    background_color: (0, 0, 0, 0)
-                    color: (0.545, 0.718, 1.0, 1)
-                    font_size: '15sp'
-                    bold: True
-                    on_release: root.go_back()
-
-                # Encabezado con ícono
+                # Icono y Títulos
                 BoxLayout:
                     orientation: 'vertical'
                     size_hint_y: None
-                    height: '84dp'
-                    spacing: 4
-                    AnchorLayout:
-                        anchor_x: 'center'
-                        anchor_y: 'center'
+                    height: '110dp'
+                    spacing: 8
+                    halign: 'center'
+
+                    Label:
+                        text: "\ue80c"
+                        font_name: 'MaterialIcons'
+                        font_size: '32sp'
+                        color: (0.337, 0.537, 0.910, 1)
                         size_hint_y: None
-                        height: '50dp'
-                        BoxLayout:
-                            size_hint: (None, None)
-                            size: ('48dp', '48dp')
-                            canvas.before:
-                                Color:
-                                    rgba: (0.106, 0.149, 0.220, 1)
-                                RoundedRectangle:
-                                    pos: self.pos
-                                    size: self.size
-                                    radius: [14]
-                                Color:
-                                    rgba: (0.337, 0.537, 0.910, 0.3)
-                                Line:
-                                    rounded_rectangle: [self.x, self.y, self.width, self.height, 14]
-                                    width: 1
-                            Label:
-                                text: "\ue80c"
-                                font_name: 'MaterialIcons'
-                                font_size: '28sp'
-                                color: (0.545, 0.718, 1.0, 1)
-                                halign: 'center'
-                                valign: 'middle'
+                        height: '40dp'
+
                     Label:
                         text: "[b]Registro de Estudiante[/b]"
                         markup: True
                         font_size: '22sp'
                         color: (0.957, 0.965, 0.980, 1)
                         size_hint_y: None
-                        height: '30dp'
-                        halign: 'center'
+                        height: '28dp'
 
-                Label:
-                    text: "Personaliza tu horario, materias y seguimiento de notas ingresando tus datos académicos:"
-                    font_size: '13sp'
-                    color: (0.627, 0.682, 0.753, 1)
-                    halign: 'center'
-                    valign: 'middle'
-                    size_hint_y: None
-                    height: '40dp'
-                    text_size: (self.width, None)
-
-                # Formulario en Tarjeta
-                DarkCard:
-                    spacing: 10
-                    padding: [16, 16]
-
-                    # Campo Nombre
                     Label:
-                        text: "Nombre y Apellido *"
+                        text: "Personaliza tus datos académicos para el seguimiento:"
                         font_size: '13sp'
-                        bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: (0.627, 0.682, 0.753, 1)
                         size_hint_y: None
-                        height: '22dp'
-                        halign: 'left'
-                        valign: 'middle'
-                        text_size: self.size
+                        height: '24sp'
 
-                    StyledTextInput:
-                        id: input_name
-                        hint_text: "Ej: Jomar Pérez"
+                # Formulario Limpio sin asteriscos y con Spinner
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: '270dp'
+                    spacing: 14
 
-                    # Campo Carrera
-                    Label:
-                        text: "Carrera Universitaria *"
+                    # Nombre y Apellido
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        height: '70dp'
+                        spacing: 4
+                        Label:
+                            text: "Nombre y Apellido"
+                            font_size: '13sp'
+                            color: (0.8, 0.84, 0.9, 1)
+                            halign: 'left'
+                            text_size: self.size
+                        TextInput:
+                            id: name_input
+                            hint_text: "Ej. Jomar Pérez"
+                            multiline: False
+                            size_hint_y: None
+                            height: '44dp'
+                            padding: [12, 12, 12, 12]
+                            background_normal: ''
+                            background_active: ''
+                            background_color: (0.12, 0.16, 0.24, 1)
+                            foreground_color: (0.95, 0.95, 0.95, 1)
+                            hint_text_color: (0.5, 0.55, 0.65, 1)
+
+                    # Carrera Universitaria
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        height: '70dp'
+                        spacing: 4
+                        Label:
+                            text: "Carrera Universitaria"
+                            font_size: '13sp'
+                            color: (0.8, 0.84, 0.9, 1)
+                            halign: 'left'
+                            text_size: self.size
+                        TextInput:
+                            id: career_input
+                            hint_text: "Ej. Ingeniería en Sistemas"
+                            multiline: False
+                            size_hint_y: None
+                            height: '44dp'
+                            padding: [12, 12, 12, 12]
+                            background_normal: ''
+                            background_active: ''
+                            background_color: (0.12, 0.16, 0.24, 1)
+                            foreground_color: (0.95, 0.95, 0.95, 1)
+                            hint_text_color: (0.5, 0.55, 0.65, 1)
+
+                    # Semestre (Menú Desplegable)
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        height: '70dp'
+                        spacing: 4
+                        Label:
+                            text: "Semestre"
+                            font_size: '13sp'
+                            color: (0.8, 0.84, 0.9, 1)
+                            halign: 'left'
+                            text_size: self.size
+                        Spinner:
+                            id: semester_spinner
+                            text: "Selecciona tu semestre"
+                            values: ['1.er semestre', '2.do semestre', '3.er semestre', '4.to semestre', '5.to semestre', '6.to semestre', '7.mo semestre']
+                            size_hint_y: None
+                            height: '44dp'
+                            background_normal: ''
+                            background_color: (0.12, 0.16, 0.24, 1)
+                            color: (0.9, 0.93, 0.96, 1)
+
+                # Botones de Acción
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: '100dp'
+                    spacing: 12
+                    padding: [0, 10, 0, 0]
+
+                    Button:
+                        text: "Guardar e Ingresar"
+                        size_hint_y: None
+                        height: '48dp'
+                        background_normal: ''
+                        background_color: (0.337, 0.537, 0.910, 1)
+                        color: (1, 1, 1, 1)
+                        bold: True
+                        font_size: '15sp'
+                        on_release: root.save_data()
+
+                    Button:
+                        text: "Omitir por ahora"
+                        size_hint_y: None
+                        height: '36dp'
+                        background_color: 0, 0, 0, 0
+                        color: (0.627, 0.682, 0.753, 1)
                         font_size: '13sp'
-                        bold: True
-                        color: (0.545, 0.718, 1.0, 1)
-                        size_hint_y: None
-                        height: '22dp'
-                        halign: 'left'
-                        valign: 'middle'
-                        text_size: self.size
-
-                    StyledTextInput:
-                        id: input_career
-                        hint_text: "Ej: Ingeniería en Sistemas"
-
-                    # Campo Semestre
-                    Label:
-                        text: "Semestre *"
-                        font_size: '13sp'
-                        bold: True
-                        color: (0.545, 0.718, 1.0, 1)
-                        size_hint_y: None
-                        height: '22dp'
-                        halign: 'left'
-                        valign: 'middle'
-                        text_size: self.size
-
-                    StyledTextInput:
-                        id: input_semester
-                        hint_text: "Ej: 3.er semestre o 4to"
-
-                Widget:
-                    size_hint_y: None
-                    height: '6dp'
-
-                # Botón Guardar e Ingresar
-                PrimaryButton:
-                    text: "Guardar e Ingresar"
-                    on_release: root.submit_login()
-
-                # Botón Secundario Omitir
-                Button:
-                    text: "Omitir por ahora"
-                    size_hint_y: None
-                    height: '38dp'
-                    background_normal: ''
-                    background_color: (0, 0, 0, 0)
-                    color: (0.627, 0.682, 0.753, 1)
-                    font_size: '13sp'
-                    on_release: root.skip_login()
-
-                Widget:
-                    size_hint_y: None
-                    height: '20dp'
+                        on_release: root.navigate('home')

@@ -12,7 +12,7 @@ from kivy.app import App
 class ClassModal(ModalView):
     def __init__(self, day_index, class_index, on_save_cb, on_delete_cb=None, **kwargs):
         super().__init__(**kwargs)
-        self.size_hint = (0.9, 0.7)
+        self.size_hint = (0.88, 0.74)
         self.auto_dismiss = True
         self.background_color = (0, 0, 0, 0.75)
         self.day_index = day_index
@@ -27,75 +27,109 @@ class ClassModal(ModalView):
             if 0 <= class_index < len(day_classes):
                 class_data = day_classes[class_index]
 
-        root = BoxLayout(orientation='vertical', padding=16, spacing=10)
+        root = BoxLayout(orientation='vertical', padding=[18, 14, 18, 14], spacing=8)
         with root.canvas.before:
             from kivy.graphics import Color, RoundedRectangle
             Color(0.106, 0.149, 0.220, 1)
-            rect = RoundedRectangle(pos=root.pos, size=root.size, radius=[14])
+            rect = RoundedRectangle(pos=root.pos, size=root.size, radius=[16])
             root.bind(pos=lambda obj, val: setattr(rect, 'pos', val),
                       size=lambda obj, val: setattr(rect, 'size', val))
 
+        # Icono superior decorativo
+        root.add_widget(Label(
+            text="\ue878",
+            font_name='MaterialIcons',
+            font_size='28sp',
+            color=(0.545, 0.718, 1.0, 1),
+            size_hint_y=None,
+            height='30dp',
+            halign='center',
+            valign='middle'
+        ))
+
         title = "Editar clase" if class_index >= 0 else "Agregar clase"
-        root.add_widget(Label(text=f"[b]{title}[/b]", markup=True, font_size='18sp', size_hint_y=None, height='32dp'))
+        root.add_widget(Label(
+            text=f"[b]{title}[/b]", 
+            markup=True, 
+            font_size='17sp', 
+            size_hint_y=None, 
+            height='24dp', 
+            color=(0.957, 0.965, 0.980, 1),
+            halign='center'
+        ))
 
         # Materia: con opción de seleccionar de materias registradas o escribir
         subject_names = [s.get('n', '') for s in store.subjects if s.get('n')]
         if subject_names:
-            root.add_widget(Label(text="Seleccionar de tus materias:", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+            root.add_widget(Label(text="Seleccionar de tus materias", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
             default_sp = class_data.get('n', '') if class_data.get('n') in subject_names else subject_names[0]
-            self.sp_subject = Spinner(text=default_sp, values=subject_names, size_hint_y=None, height='38dp')
+            self.sp_subject = Spinner(
+                text=default_sp, 
+                values=subject_names, 
+                size_hint_y=None, 
+                height='38dp',
+                background_normal='',
+                background_color=(0.12, 0.16, 0.24, 1),
+                color=(0.9, 0.93, 0.96, 1)
+            )
             self.sp_subject.bind(text=lambda inst, val: setattr(self.txt_name, 'text', val))
             root.add_widget(self.sp_subject)
 
-        root.add_widget(Label(text="Nombre de la materia *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Nombre de la materia", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         init_name = str(class_data.get('n', '')) or (subject_names[0] if subject_names else '')
         self.txt_name = TextInput(
             text=init_name,
             hint_text="Ej: Programación II",
             multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_name)
 
-        root.add_widget(Label(text="Horario (ej: 08:00 – 10:00) *", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Horario (ej: 08:00 – 10:00)", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_time = TextInput(
             text=str(class_data.get('h', '08:00 – 10:00')),
             hint_text="08:00 – 10:00",
             multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_time)
 
-        root.add_widget(Label(text="Aula o enlace virtual", size_hint_y=None, height='18dp', halign='left', color=(0.627, 0.682, 0.753, 1)))
+        root.add_widget(Label(text="Aula o enlace virtual", size_hint_y=None, height='16dp', halign='left', color=(0.8, 0.84, 0.9, 1), font_size='12sp'))
         self.txt_room = TextInput(
             text=str(class_data.get('a', 'Aula 101')),
             hint_text="Ej: Lab 3, Aula B-204, Zoom",
             multiline=False, size_hint_y=None, height='38dp',
-            background_normal='', background_color=(0.063, 0.094, 0.153, 1),
-            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1)
+            padding=[10, 8, 10, 8],
+            background_normal='', background_active='', background_color=(0.12, 0.16, 0.24, 1),
+            foreground_color=(0.957, 0.965, 0.980, 1), cursor_color=(0.545, 0.718, 1.0, 1),
+            hint_text_color=(0.5, 0.55, 0.65, 1)
         )
         root.add_widget(self.txt_room)
 
         btn_save = Button(
-            text="Guardar clase", size_hint_y=None, height='44dp', background_normal='',
-            background_color=(0.337, 0.537, 0.910, 1), color=(0.063, 0.094, 0.153, 1), bold=True
+            text="Guardar clase", size_hint_y=None, height='40dp', background_normal='',
+            background_color=(0.337, 0.537, 0.910, 1), color=(1, 1, 1, 1), bold=True, font_size='13sp'
         )
         btn_save.bind(on_release=self.save)
         root.add_widget(btn_save)
 
         if class_index >= 0:
             btn_del = Button(
-                text="Eliminar clase", size_hint_y=None, height='38dp', background_normal='',
-                background_color=(0.173, 0.227, 0.322, 0.7), color=(0.949, 0.651, 0.353, 1)
+                text="Eliminar clase", size_hint_y=None, height='34dp', background_normal='',
+                background_color=(0.173, 0.227, 0.322, 0.7), color=(0.949, 0.651, 0.353, 1), font_size='12sp'
             )
             btn_del.bind(on_release=self.delete)
             root.add_widget(btn_del)
 
         btn_cancel = Button(
-            text="Cancelar", size_hint_y=None, height='38dp', background_normal='',
-            background_color=(0.106, 0.149, 0.220, 1), color=(0.545, 0.718, 1.0, 1)
+            text="Cancelar", size_hint_y=None, height='32dp', background_normal='',
+            background_color=(0, 0, 0, 0), color=(0.627, 0.682, 0.753, 1), font_size='12sp'
         )
         btn_cancel.bind(on_release=self.dismiss)
         root.add_widget(btn_cancel)
