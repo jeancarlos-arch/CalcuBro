@@ -162,11 +162,12 @@
                             radius: [dp(12)]
                     on_release: root.set_mode('standard')
 
-        # ===== VISTA 1: CALCULADORA ACADÉMICA PONDERADA (ESTILO PROTOTIPO) =====
+        # ===== VISTA 1: CALCULADORA ACADÉMICA PONDERADA =====
         ScrollView:
             do_scroll_x: False
             opacity: 1 if root.active_calc_mode == 'weighted' else 0
-            size_hint_y: 1 if root.active_calc_mode == 'weighted' else 0
+            size_hint_y: 1 if root.active_calc_mode == 'weighted' else None
+            height: 0 if root.active_calc_mode != 'weighted' else self.height
             disabled: root.active_calc_mode != 'weighted'
 
             BoxLayout:
@@ -245,7 +246,7 @@
                     height: self.minimum_height
                     spacing: 8
 
-                # 3. Botón Agregar nota (exacto como en el prototipo)
+                # 3. Botón Agregar nota
                 GhostButton:
                     text: "[font=MaterialIcons]\ue145[/font]  Agregar nota"
                     markup: True
@@ -295,7 +296,6 @@
 
                 # 5. Resultados calculados automáticamente
                 DarkCard:
-                    # Alerta si pesos superan el 100%
                     Label:
                         text: f"[font=MaterialIcons]\ue002[/font]  [color=f2a65a][b]{root.warning_text}[/b][/color]" if root.warning_text else ""
                         markup: True
@@ -303,7 +303,6 @@
                         height: '24dp' if root.warning_text else '0dp'
                         opacity: 1 if root.warning_text else 0
 
-                    # Porcentaje evaluado y pendiente
                     BoxLayout:
                         size_hint_y: None
                         height: '22dp'
@@ -326,7 +325,6 @@
                         value: root.progress_percent
                         bar_color: (0.224, 0.788, 0.541, 1)
 
-                    # Promedio ponderado grande
                     BoxLayout:
                         size_hint_y: None
                         height: '42dp'
@@ -346,7 +344,6 @@
                             width: '90dp'
                             text_size: self.size
 
-                    # Puntos y Nota Máxima
                     Label:
                         text: f"[font=MaterialIcons]\ue8e5[/font]  Puntos: [b]{root.accum_pts_text}[/b]      Máx posible: [b]{root.max_possible_text}[/b]"
                         markup: True
@@ -357,7 +354,6 @@
                         halign: 'left'
                         text_size: self.width, None
 
-                    # Predicciones
                     Label:
                         text: f"[font=MaterialIcons]\ue5ca[/font]  [color=39c98a]{root.min_status_text}[/color]"
                         markup: True
@@ -386,7 +382,8 @@
         BoxLayout:
             orientation: 'vertical'
             opacity: 1 if root.active_calc_mode == 'standard' else 0
-            size_hint_y: 1 if root.active_calc_mode == 'standard' else 0
+            size_hint_y: 1 if root.active_calc_mode == 'standard' else None
+            height: 0 if root.active_calc_mode != 'standard' else self.height
             disabled: root.active_calc_mode != 'standard'
             padding: [20, 10, 20, 16]
             spacing: 10

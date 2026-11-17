@@ -200,10 +200,10 @@ GLOBAL_KV = """
             size: self.size
             radius: [dp(4)]
         Color:
-            rgba: self.bar_color
+            rgba: self.bar_color if self.value > 0 else (0, 0, 0, 0)
         RoundedRectangle:
             pos: self.pos
-            size: (self.width * min(1.0, max(0.0, self.value / 100.0)), self.height)
+            size: (max(dp(8), self.width * min(1.0, max(0.0, self.value / 100.0))), self.height) if self.value > 0 else (0, 0)
             radius: [dp(4)]
 
 <TileButton@Button>:

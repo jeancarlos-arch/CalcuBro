@@ -1,5 +1,13 @@
 #:kivy 2.3.0
 
+<SemesterOption@SpinnerOption>:
+    background_normal: ''
+    background_down: ''
+    background_color: (0.106, 0.149, 0.220, 1) if self.state == 'normal' else (0.173, 0.227, 0.322, 1)
+    color: (0.957, 0.965, 0.980, 1)
+    font_size: '14sp'
+    height: '42dp'
+
 <LoginScreen>:
     name: 'login'
     BoxLayout:
@@ -22,7 +30,7 @@
 
                 # Botón Volver
                 Button:
-                    text: "[font=MaterialIcons][/font]  Volver"
+                    text: "[font=MaterialIcons]\ue5cb[/font]  Volver"
                     markup: True
                     size_hint: (None, None)
                     size: ('90dp', '32dp')
@@ -60,7 +68,7 @@
                                     rounded_rectangle: [self.x, self.y, self.width, self.height, 14]
                                     width: 1
                             Label:
-                                text: ""
+                                text: "\ue80c"
                                 font_name: 'MaterialIcons'
                                 font_size: '28sp'
                                 color: (0.545, 0.718, 1.0, 1)
@@ -122,7 +130,7 @@
                         id: input_career
                         hint_text: "Ej: Ingeniería en Sistemas"
 
-                    # Campo Semestre
+                    # Campo Semestre (Desplegable 1ro a 8vo)
                     Label:
                         text: "Semestre *"
                         font_size: '13sp'
@@ -134,9 +142,34 @@
                         valign: 'middle'
                         text_size: self.size
 
-                    StyledTextInput:
+                    Spinner:
                         id: input_semester
-                        hint_text: "Ej: 3.er semestre o 4to"
+                        text: "Selecciona tu semestre"
+                        values: ["1er semestre", "2do semestre", "3er semestre", "4to semestre", "5to semestre", "6to semestre", "7mo semestre", "8vo semestre"]
+                        option_cls: 'SemesterOption'
+                        size_hint_y: None
+                        height: '46dp'
+                        font_size: '14sp'
+                        halign: 'left'
+                        valign: 'middle'
+                        padding: [14, 0]
+                        text_size: (self.width - dp(28), None)
+                        color: (0.627, 0.682, 0.753, 1) if self.text == "Selecciona tu semestre" else (0.957, 0.965, 0.980, 1)
+                        background_normal: ''
+                        background_down: ''
+                        background_color: (0, 0, 0, 0)
+                        canvas.before:
+                            Color:
+                                rgba: (0.063, 0.094, 0.153, 1)
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(12)]
+                            Color:
+                                rgba: (0.173, 0.227, 0.322, 0.8)
+                            Line:
+                                rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
+                                width: dp(1.2)
 
                 Widget:
                     size_hint_y: None
