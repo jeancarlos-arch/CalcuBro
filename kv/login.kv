@@ -3,8 +3,8 @@
 <SemesterOption@SpinnerOption>:
     background_normal: ''
     background_down: ''
-    background_color: (0.106, 0.149, 0.220, 1) if self.state == 'normal' else (0.173, 0.227, 0.322, 1)
-    color: (0.957, 0.965, 0.980, 1)
+    background_color: app.card_color if self.state == 'normal' else app.btn_pressed
+    color: app.text_primary
     font_size: '14sp'
     height: '42dp'
 
@@ -14,7 +14,7 @@
         orientation: 'vertical'
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: app.bg_color
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -36,7 +36,7 @@
                     size: ('90dp', '32dp')
                     background_normal: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.545, 0.718, 1.0, 1)
+                    color: app.accent_blue
                     font_size: '15sp'
                     bold: True
                     on_release: root.go_back()
@@ -57,13 +57,13 @@
                             size: ('48dp', '48dp')
                             canvas.before:
                                 Color:
-                                    rgba: (0.106, 0.149, 0.220, 1)
+                                    rgba: app.card_color
                                 RoundedRectangle:
                                     pos: self.pos
                                     size: self.size
                                     radius: [14]
                                 Color:
-                                    rgba: (0.337, 0.537, 0.910, 0.3)
+                                    rgba: app.card_border
                                 Line:
                                     rounded_rectangle: [self.x, self.y, self.width, self.height, 14]
                                     width: 1
@@ -71,14 +71,14 @@
                                 text: "\ue80c"
                                 font_name: 'MaterialIcons'
                                 font_size: '28sp'
-                                color: (0.545, 0.718, 1.0, 1)
+                                color: app.accent_blue
                                 halign: 'center'
                                 valign: 'middle'
                     Label:
                         text: "[b]Registro de Estudiante[/b]"
                         markup: True
                         font_size: '22sp'
-                        color: (0.957, 0.965, 0.980, 1)
+                        color: app.text_primary
                         size_hint_y: None
                         height: '30dp'
                         halign: 'center'
@@ -86,7 +86,7 @@
                 Label:
                     text: "Personaliza tu horario, materias y seguimiento de notas ingresando tus datos académicos:"
                     font_size: '13sp'
-                    color: (0.627, 0.682, 0.753, 1)
+                    color: app.text_secondary
                     halign: 'center'
                     valign: 'middle'
                     size_hint_y: None
@@ -103,7 +103,7 @@
                         text: "Nombre y Apellido *"
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '22dp'
                         halign: 'left'
@@ -112,14 +112,14 @@
 
                     StyledTextInput:
                         id: input_name
-                        hint_text: "Ej: Jomar Pérez"
+                        hint_text: "Ej: Camila Reyes"
 
                     # Campo Carrera
                     Label:
                         text: "Carrera Universitaria *"
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '22dp'
                         halign: 'left'
@@ -135,7 +135,7 @@
                         text: "Semestre *"
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '22dp'
                         halign: 'left'
@@ -154,19 +154,19 @@
                         valign: 'middle'
                         padding: [14, 0]
                         text_size: (self.width - dp(28), None)
-                        color: (0.627, 0.682, 0.753, 1) if self.text == "Selecciona tu semestre" else (0.957, 0.965, 0.980, 1)
+                        color: app.text_secondary if self.text == "Selecciona tu semestre" else app.text_primary
                         background_normal: ''
                         background_down: ''
                         background_color: (0, 0, 0, 0)
                         canvas.before:
                             Color:
-                                rgba: (0.063, 0.094, 0.153, 1)
+                                rgba: app.input_bg
                             RoundedRectangle:
                                 pos: self.pos
                                 size: self.size
                                 radius: [dp(12)]
                             Color:
-                                rgba: (0.173, 0.227, 0.322, 0.8)
+                                rgba: app.card_border
                             Line:
                                 rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
                                 width: dp(1.2)
@@ -187,7 +187,7 @@
                     height: '38dp'
                     background_normal: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.627, 0.682, 0.753, 1)
+                    color: app.text_secondary
                     font_size: '13sp'
                     on_release: root.skip_login()
 

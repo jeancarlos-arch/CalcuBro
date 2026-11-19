@@ -299,25 +299,36 @@ class CalcScreen(Screen):
             app.show_toast("No hay evaluaciones disponibles en las materias")
 
     def rebuild_grades_ui(self):
+        app = App.get_running_app()
         container = self.ids.get('grades_container')
         if not container:
             return
         container.clear_widgets()
 
+        card_bg = app.card_color if app else (0.106, 0.149, 0.220, 1)
+        card_border = app.card_border if app else (0.173, 0.227, 0.322, 1)
+        input_bg = app.input_bg if app else (0.063, 0.094, 0.153, 1)
+        text_p = app.text_primary if app else (0.957, 0.965, 0.980, 1)
+        text_s = app.text_secondary if app else (0.627, 0.682, 0.753, 1)
+        accent_b = app.accent_blue if app else (0.545, 0.718, 1.0, 1)
+        orange_c = app.orange_color if app else (0.949, 0.651, 0.353, 1)
+
         if not self.grades_list:
             empty_box = BoxLayout(orientation='vertical', size_hint_y=None, height='90dp', padding=[16, 14], spacing=6)
             with empty_box.canvas.before:
-                from kivy.graphics import Color, RoundedRectangle
-                Color(0.106, 0.149, 0.220, 0.6)
+                from kivy.graphics import Color, RoundedRectangle, Line
+                Color(*card_bg)
                 r_c = RoundedRectangle(pos=empty_box.pos, size=empty_box.size, radius=[10])
-                empty_box.bind(pos=lambda obj, val, r=r_c: setattr(r, 'pos', val),
-                               size=lambda obj, val, r=r_c: setattr(r, 'size', val))
+                Color(*card_border)
+                l_c = Line(rounded_rectangle=[empty_box.x, empty_box.y, empty_box.width, empty_box.height, 10], width=1)
+                empty_box.bind(pos=lambda obj, val, r=r_c, l=l_c: (setattr(r, 'pos', val), setattr(l, 'rounded_rectangle', [obj.x, obj.y, obj.width, obj.height, 10])),
+                               size=lambda obj, val, r=r_c, l=l_c: (setattr(r, 'size', val), setattr(l, 'rounded_rectangle', [obj.x, obj.y, obj.width, obj.height, 10])))
 
             lbl1 = Label(text="[b]No hay evaluaciones en la lista[/b]", markup=True,
-                         color=(0.957, 0.965, 0.980, 1), font_size='14sp', size_hint_y=None, height='24dp', halign='left')
+                         color=text_p, font_size='14sp', size_hint_y=None, height='24dp', halign='left')
             lbl1.bind(size=lbl1.setter('text_size'))
-            lbl2 = Label(text="Toca '[font=MaterialIcons][/font] Agregar nota' para comenzar.",
-                         markup=True, color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_y=None, height='28dp', halign='left')
+            lbl2 = Label(text="Toca '[font=MaterialIcons]\ue145[/font] Agregar nota' para comenzar.",
+                         markup=True, color=text_s, font_size='12sp', size_hint_y=None, height='28dp', halign='left')
             lbl2.bind(size=lbl2.setter('text_size'))
             empty_box.add_widget(lbl1)
             empty_box.add_widget(lbl2)
@@ -327,11 +338,16 @@ class CalcScreen(Screen):
         for idx, item in enumerate(self.grades_list):
             card = BoxLayout(orientation='vertical', size_hint_y=None, height='100dp', padding=[14, 10], spacing=6)
             with card.canvas.before:
-                from kivy.graphics import Color, RoundedRectangle
-                Color(0.106, 0.149, 0.220, 1)
+                from kivy.graphics import Color, RoundedRectangle, Line
+                Color(*card_bg)
                 r_c = RoundedRectangle(pos=card.pos, size=card.size, radius=[10])
-                card.bind(pos=lambda obj, val, r=r_c: setattr(r, 'pos', val),
-                          size=lambda obj, val, r=r_c: setattr(r, 'size', val))
+                Color(*card_border)
+                l_c = Line(rounded_rectangle=[card.x, card.y, card.width, card.height, 10], width=1)
+                def _update_card(obj, val, r=r_c, l=l_c):
+                    r.pos = obj.pos
+                    r.size = obj.size
+                    l.rounded_rectangle = [obj.x, obj.y, obj.width, obj.height, 10]
+                card.bind(pos=_update_card, size=_update_card)
 
             # Fila Superior: Nombre de evaluación y botón de eliminar
             top_row = BoxLayout(size_hint_y=None, height='32dp', spacing=8)
@@ -343,28 +359,28 @@ class CalcScreen(Screen):
                 height='32dp',
                 background_normal='',
                 background_active='',
-                background_color=(0.063, 0.094, 0.153, 1),
-                foreground_color=(0.957, 0.965, 0.980, 1),
-                cursor_color=(0.545, 0.718, 1.0, 1),
+                background_color=input_bg,
+                foreground_color=text_p,
+                cursor_color=accent_b,
                 padding=[8, 6],
                 font_size='13sp'
             )
             txt_name.bind(text=lambda inst, val, i=idx: self.update_grade_val(i, 'n', val, is_str=True))
 
             btn_del = Button(
-                text="[font=MaterialIcons][/font] Eliminar",
+                text="[font=MaterialIcons]\ue872[/font] Eliminar",
                 markup=True,
                 size_hint=(None, None),
                 size=('84dp', '30dp'),
                 background_normal='',
                 background_down='',
                 background_color=(0, 0, 0, 0),
-                color=(0.949, 0.651, 0.353, 1),
+                color=orange_c,
                 font_size='12sp'
             )
             with btn_del.canvas.before:
                 from kivy.graphics import Color as DelColor, RoundedRectangle as DelRect
-                DelColor(0.173, 0.227, 0.322, 0.6)
+                DelColor(*card_border)
                 r_del = DelRect(pos=btn_del.pos, size=btn_del.size, radius=[8])
                 btn_del.bind(pos=lambda inst, val, r=r_del: setattr(r, 'pos', val),
                              size=lambda inst, val, r=r_del: setattr(r, 'size', val))
@@ -378,7 +394,7 @@ class CalcScreen(Screen):
 
             # Bloque Nota
             b_g = BoxLayout(orientation='horizontal', spacing=6)
-            b_g.add_widget(Label(text="Nota:", color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_x=None, width='40dp'))
+            b_g.add_widget(Label(text="Nota:", color=text_s, font_size='12sp', size_hint_x=None, width='40dp'))
             txt_g = TextInput(
                 text=str(item.get('g', 0.0)),
                 multiline=False,
@@ -387,9 +403,9 @@ class CalcScreen(Screen):
                 height='34dp',
                 background_normal='',
                 background_active='',
-                background_color=(0.063, 0.094, 0.153, 1),
-                foreground_color=(0.957, 0.965, 0.980, 1),
-                cursor_color=(0.545, 0.718, 1.0, 1),
+                background_color=input_bg,
+                foreground_color=text_p,
+                cursor_color=accent_b,
                 padding=[8, 6],
                 font_size='13sp'
             )
@@ -398,7 +414,7 @@ class CalcScreen(Screen):
 
             # Bloque Peso %
             b_w = BoxLayout(orientation='horizontal', spacing=6)
-            b_w.add_widget(Label(text="Peso %:", color=(0.627, 0.682, 0.753, 1), font_size='12sp', size_hint_x=None, width='50dp'))
+            b_w.add_widget(Label(text="Peso %:", color=text_s, font_size='12sp', size_hint_x=None, width='50dp'))
             txt_w = TextInput(
                 text=str(item.get('w', 0.0)),
                 multiline=False,
@@ -407,9 +423,9 @@ class CalcScreen(Screen):
                 height='34dp',
                 background_normal='',
                 background_active='',
-                background_color=(0.063, 0.094, 0.153, 1),
-                foreground_color=(0.957, 0.965, 0.980, 1),
-                cursor_color=(0.545, 0.718, 1.0, 1),
+                background_color=input_bg,
+                foreground_color=text_p,
+                cursor_color=accent_b,
                 padding=[8, 6],
                 font_size='13sp'
             )

@@ -14,11 +14,63 @@ from kivy.core.text import LabelBase
 from kivy.uix.screenmanager import ScreenManager, SlideTransition
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ColorProperty, BooleanProperty
 from kivy.clock import Clock
 
-# Definir color de fondo global (--bg: #101827)
-Window.clearcolor = (0.063, 0.094, 0.153, 1)
+# Paletas de colores: Modo Oscuro (prototipo actual) y Modo Claro (limpio y accesible)
+DARK_THEME = {
+    'bg_color': (0.063, 0.094, 0.153, 1),          # #101827
+    'card_color': (0.106, 0.149, 0.220, 1),        # #1B2638
+    'card_border': (0.173, 0.227, 0.322, 1),       # #2C3A52
+    'primary_color': (0.337, 0.537, 0.910, 1),     # #5689E8
+    'primary_text': (0.063, 0.094, 0.153, 1),      # Texto oscuro sobre botón primario
+    'accent_blue': (0.545, 0.718, 1.0, 1),        # #8BB7FF
+    'text_primary': (0.957, 0.965, 0.980, 1),      # #F4F6FA
+    'text_secondary': (0.627, 0.682, 0.753, 1),    # #A0AEC0
+    'nav_bg_color': (0.106, 0.149, 0.220, 1),      # #1B2638
+    'nav_border': (0.173, 0.227, 0.322, 1),        # #2C3A52
+    'input_bg': (0.063, 0.094, 0.153, 1),          # #101827
+    'chip_inactive_bg': (0.106, 0.149, 0.220, 1),
+    'chip_inactive_text': (0.627, 0.682, 0.753, 1),
+    'btn_pressed': (0.137, 0.192, 0.280, 1),
+    'green_color': (0.224, 0.788, 0.541, 1),       # #39C98A
+    'orange_color': (0.949, 0.651, 0.353, 1),      # #F2A65A
+    'bg_color_hex': '101827',
+    'card_color_hex': '1b2638',
+    'text_primary_hex': 'f4f6fa',
+    'text_secondary_hex': 'a0aec0',
+    'accent_blue_hex': '8bb7ff',
+    'primary_color_hex': '5689e8',
+    'green_color_hex': '39c98a',
+    'orange_color_hex': 'f2a65a',
+}
+
+LIGHT_THEME = {
+    'bg_color': (0.949, 0.957, 0.973, 1),          # #F2F4F8 (Fondo claro limpio)
+    'card_color': (1.0, 1.0, 1.0, 1),              # #FFFFFF (Tarjeta blanca pura)
+    'card_border': (0.860, 0.890, 0.930, 1),       # #DCE3ED (Borde sutil)
+    'primary_color': (0.220, 0.450, 0.880, 1),     # #3873E0 (Azul primario accesible)
+    'primary_text': (1.0, 1.0, 1.0, 1),             # Texto blanco sobre botón primario
+    'accent_blue': (0.180, 0.420, 0.820, 1),       # #2E6BD1 (Azul para íconos/enlaces)
+    'text_primary': (0.070, 0.100, 0.160, 1),      # #121A29 (Texto muy oscuro legible)
+    'text_secondary': (0.420, 0.480, 0.560, 1),    # #6B7B8F (Gris medio accesible)
+    'nav_bg_color': (1.0, 1.0, 1.0, 1),            # #FFFFFF (Barra inferior blanca)
+    'nav_border': (0.860, 0.890, 0.930, 1),        # #DCE3ED
+    'input_bg': (0.965, 0.975, 0.985, 1),          # #F6F8FB
+    'chip_inactive_bg': (0.900, 0.925, 0.955, 1),
+    'chip_inactive_text': (0.350, 0.410, 0.500, 1),
+    'btn_pressed': (0.910, 0.930, 0.960, 1),
+    'green_color': (0.130, 0.650, 0.400, 1),       # #21A666
+    'orange_color': (0.880, 0.500, 0.120, 1),      # #E0801E
+    'bg_color_hex': 'f2f4f8',
+    'card_color_hex': 'ffffff',
+    'text_primary_hex': '121a29',
+    'text_secondary_hex': '6b7b8f',
+    'accent_blue_hex': '2e6bd1',
+    'primary_color_hex': '3873e0',
+    'green_color_hex': '21a666',
+    'orange_color_hex': 'e0801e',
+}
 
 # Registrar fuente de íconos MaterialIcons con ruta relativa
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -41,7 +93,7 @@ from screens.profile_screen import ProfileScreen
 from screens.login_screen import LoginScreen
 
 
-# Componentes y estilos globales en KV
+# Componentes y estilos globales en KV vinculados a la app de forma reactiva
 GLOBAL_KV = """
 #:import dp kivy.metrics.dp
 
@@ -53,11 +105,16 @@ GLOBAL_KV = """
     spacing: dp(8)
     canvas.before:
         Color:
-            rgba: (0.106, 0.149, 0.220, 1) # --sf
+            rgba: app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(14)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <PrimaryButton@Button>:
     size_hint_y: None
@@ -65,12 +122,12 @@ GLOBAL_KV = """
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.063, 0.094, 0.153, 1) # --bg
+    color: app.primary_text
     bold: True
     font_size: '15sp'
     canvas.before:
         Color:
-            rgba: (0.27, 0.45, 0.80, 1) if self.state == 'down' else (0.337, 0.537, 0.910, 1)
+            rgba: app.primary_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -82,18 +139,18 @@ GLOBAL_KV = """
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.545, 0.718, 1.0, 1) # --bl2
+    color: app.accent_blue
     bold: True
     font_size: '14sp'
     canvas.before:
         Color:
-            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+            rgba: app.btn_pressed if self.state == 'down' else app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(14)]
         Color:
-            rgba: (0.173, 0.227, 0.322, 0.9)
+            rgba: app.card_border
         Line:
             rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
             width: dp(1)
@@ -104,17 +161,17 @@ GLOBAL_KV = """
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.949, 0.651, 0.353, 1)
+    color: app.orange_color
     font_size: '13sp'
     canvas.before:
         Color:
-            rgba: (0.173, 0.227, 0.322, 0.6) if self.state == 'down' else (0.106, 0.149, 0.220, 0.9)
+            rgba: app.btn_pressed if self.state == 'down' else app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(12)]
         Color:
-            rgba: (0.949, 0.651, 0.353, 0.4)
+            rgba: app.orange_color
         Line:
             rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
             width: dp(1)
@@ -126,14 +183,19 @@ GLOBAL_KV = """
     background_color: (0, 0, 0, 0)
     font_size: '12sp'
     bold: True
-    color: (0.063, 0.094, 0.153, 1) if self.is_active else (0.627, 0.682, 0.753, 1)
+    color: app.bg_color if self.is_active else app.text_secondary
     canvas.before:
         Color:
-            rgba: (0.337, 0.537, 0.910, 1) if self.is_active else (0.106, 0.149, 0.220, 1)
+            rgba: app.primary_color if self.is_active else app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(12)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
+            width: dp(1)
 
 <StyledTextInput@TextInput>:
     size_hint_y: None
@@ -142,19 +204,19 @@ GLOBAL_KV = """
     background_normal: ''
     background_active: ''
     background_color: (0, 0, 0, 0)
-    foreground_color: (0.957, 0.965, 0.980, 1)
-    cursor_color: (0.545, 0.718, 1.0, 1)
-    hint_text_color: (0.627, 0.682, 0.753, 0.6)
+    foreground_color: app.text_primary
+    cursor_color: app.accent_blue
+    hint_text_color: app.text_secondary
     padding: [dp(12), dp(8)]
     canvas.before:
         Color:
-            rgba: (0.063, 0.094, 0.153, 1)
+            rgba: app.input_bg
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(12)]
         Color:
-            rgba: (0.337, 0.537, 0.910, 0.8) if self.focus else (0.173, 0.227, 0.322, 1)
+            rgba: app.primary_color if self.focus else app.card_border
         Line:
             rounded_rectangle: [self.x, self.y, self.width, self.height, dp(12)]
             width: dp(1)
@@ -167,7 +229,7 @@ GLOBAL_KV = """
     padding: dp(2)
     canvas.before:
         Color:
-            rgba: (0.337, 0.537, 0.910, 1) if self.active else (0.173, 0.227, 0.322, 1)
+            rgba: app.green_color if self.active else app.card_border
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -178,14 +240,16 @@ GLOBAL_KV = """
         pos: (root.x + root.width - dp(24) if root.active else root.x + dp(2), root.y + dp(3))
         canvas:
             Color:
-                rgba: (0.957, 0.965, 0.980, 1) if root.active else (0.627, 0.682, 0.753, 1)
+                rgba: (1, 1, 1, 1) if root.active else app.text_secondary
             Ellipse:
                 pos: self.pos
                 size: self.size
     Button:
         background_color: (0, 0, 0, 0)
         size_hint: (1, 1)
-        on_release: root.active = not root.active
+        on_release:
+            root.active = not root.active
+            root.dispatch('on_active', root.active)
 
 <CustomProgressBar@Widget>:
     value: 0
@@ -194,7 +258,7 @@ GLOBAL_KV = """
     height: dp(7)
     canvas:
         Color:
-            rgba: (0.063, 0.094, 0.153, 1)
+            rgba: app.input_bg
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -216,41 +280,65 @@ GLOBAL_KV = """
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.545, 0.718, 1.0, 1)
+    color: app.accent_blue
     bold: True
     canvas.before:
         Color:
-            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+            rgba: app.btn_pressed if self.state == 'down' else app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(14)]
         Color:
-            rgba: (0.173, 0.227, 0.322, 0.5)
+            rgba: app.card_border
         Line:
             rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
             width: dp(1)
 
-<ProfileLinkCard@Button>:
+<ProfileLinkCard@ButtonBehavior+BoxLayout>:
     icon_text: ""
     link_title: ""
-    markup: True
-    text: f"   [size=20sp][color=8bb7ff][font=MaterialIcons]{self.icon_text}[/font][/color][/size]    {self.link_title}"
-    halign: 'left'
-    font_size: '14sp'
     size_hint_y: None
     height: dp(50)
-    background_normal: ''
-    background_down: ''
-    background_color: (0, 0, 0, 0)
-    color: (0.957, 0.965, 0.980, 1)
+    padding: [dp(14), 0]
+    spacing: dp(12)
     canvas.before:
         Color:
-            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+            rgba: app.btn_pressed if self.state == 'down' else app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(14)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
+    Label:
+        text: root.icon_text
+        font_name: 'MaterialIcons'
+        font_size: '22sp'
+        color: app.accent_blue
+        size_hint_x: None
+        width: dp(26)
+        halign: 'center'
+        valign: 'middle'
+    Label:
+        text: root.link_title
+        font_size: '14sp'
+        color: app.text_primary
+        halign: 'left'
+        valign: 'middle'
+        text_size: self.size
+    Label:
+        text: ""
+        font_name: 'MaterialIcons'
+        font_size: '18sp'
+        color: app.text_secondary
+        size_hint_x: None
+        width: dp(20)
+        halign: 'right'
+        valign: 'middle'
 
 <NavBar@BoxLayout>:
     size_hint_y: None
@@ -259,12 +347,12 @@ GLOBAL_KV = """
     spacing: dp(4)
     canvas.before:
         Color:
-            rgba: (0.106, 0.149, 0.220, 1) # --sf
+            rgba: app.nav_bg_color
         Rectangle:
             pos: self.pos
             size: self.size
         Color:
-            rgba: (0.173, 0.227, 0.322, 1) # --ln
+            rgba: app.nav_border
         Line:
             points: [self.x, self.top, self.right, self.top]
             width: dp(1)
@@ -276,7 +364,7 @@ GLOBAL_KV = """
         font_size: '11sp'
         background_normal: ''
         background_color: (0, 0, 0, 0)
-        color: (0.545, 0.718, 1.0, 1) if app.active_tab == 'home' else (0.627, 0.682, 0.753, 1)
+        color: app.accent_blue if app.active_tab == 'home' else app.text_secondary
         bold: app.active_tab == 'home'
         on_release: app.go_screen('home', clear_history=True)
 
@@ -287,7 +375,7 @@ GLOBAL_KV = """
         font_size: '11sp'
         background_normal: ''
         background_color: (0, 0, 0, 0)
-        color: (0.545, 0.718, 1.0, 1) if app.active_tab == 'subjects' else (0.627, 0.682, 0.753, 1)
+        color: app.accent_blue if app.active_tab == 'subjects' else app.text_secondary
         bold: app.active_tab == 'subjects'
         on_release: app.go_screen('subjects', clear_history=True)
 
@@ -298,27 +386,27 @@ GLOBAL_KV = """
         font_size: '11sp'
         background_normal: ''
         background_color: (0, 0, 0, 0)
-        color: (0.545, 0.718, 1.0, 1) if app.active_tab == 'schedule' else (0.627, 0.682, 0.753, 1)
+        color: app.accent_blue if app.active_tab == 'schedule' else app.text_secondary
         bold: app.active_tab == 'schedule'
         on_release: app.go_screen('schedule', clear_history=True)
 
     Button:
         markup: True
-        text: f"[size=20sp][font=MaterialIcons][/font][/size]\\n[size=10sp]Calculadora[/size]"
+        text: f"[size=20sp][font=MaterialIcons][/font][/size]\\n[size=10sp]Perfil[/size]"
         halign: 'center'
         font_size: '11sp'
         background_normal: ''
         background_color: (0, 0, 0, 0)
-        color: (0.545, 0.718, 1.0, 1) if app.active_tab == 'calc' else (0.627, 0.682, 0.753, 1)
-        bold: app.active_tab == 'calc'
-        on_release: app.go_screen('calc', clear_history=True)
+        color: app.accent_blue if app.active_tab == 'profile' else app.text_secondary
+        bold: app.active_tab == 'profile'
+        on_release: app.go_screen('profile', clear_history=True)
 """
 
 
 class DataStore:
-    """Almacén central del estado académico de CalcuBro con persistencia JSON"""
-    DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'calcubro_data.json')
-    LEGACY_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'studymate_data.json')
+    """Almacén central del estado académico de StudyMate con persistencia JSON"""
+    DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'studymate_data.json')
+    LEGACY_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'calcubro_data.json')
 
     def __init__(self):
         # Datos del perfil del estudiante
@@ -327,10 +415,13 @@ class DataStore:
         self.student_semester = ""
         self.is_logged_in = False
 
-        # Materias del semestre (inicia vacío sin datos quemados)
+        # Preferencia de tema ('dark' u 'light')
+        self.theme = "dark"
+
+        # Materias del semestre
         self.subjects = []
 
-        # Horario semanal (0: Lunes a 4: Viernes) -> Inicia vacío
+        # Horario semanal (0: Lunes a 4: Viernes)
         self.schedule = [[], [], [], [], []]
 
         # Materia activa seleccionada para detalle
@@ -352,13 +443,14 @@ class DataStore:
         self.load_data()
 
     def save_data(self):
-        """Guarda todo el estado en un archivo JSON local sin datos quemados."""
+        """Guarda todo el estado en un archivo JSON local con persistencia completa."""
         import json
         payload = {
             'student_name': self.student_name,
             'student_career': self.student_career,
             'student_semester': self.student_semester,
             'is_logged_in': self.is_logged_in,
+            'theme': self.theme,
             'subjects': self.subjects,
             'schedule': self.schedule,
             'global_notifications': self.global_notifications,
@@ -384,6 +476,7 @@ class DataStore:
             self.student_career = data.get('student_career', '')
             self.student_semester = data.get('student_semester', '')
             self.is_logged_in = data.get('is_logged_in', bool(self.student_name))
+            self.theme = data.get('theme', 'dark')
             self.subjects = data.get('subjects', [])
             self.schedule = data.get('schedule', [[], [], [], [], []])
             self.global_notifications = data.get('global_notifications', True)
@@ -410,7 +503,6 @@ class DataStore:
                 avg = sum(float(it['g']) for it in graded) / len(graded)
                 pts += avg * w / 100.0
                 ev += w
-        # Garantizar que el porcentaje evaluado y total no excedan el 100%
         ev_clamped = min(100.0, max(0.0, ev))
         tot_clamped = min(100.0, max(0.0, tot))
         pend_clamped = max(0.0, 100.0 - ev_clamped)
@@ -439,9 +531,6 @@ class DataStore:
             return 0.0
         adv = sum(self.get_subject_progress(s) for s in self.subjects) / len(self.subjects)
         return min(100.0, max(0.0, adv))
-        if not self.subjects:
-            return 0.0
-        return sum(self.get_subject_progress(s) for s in self.subjects) / len(self.subjects)
 
     def calc_need(self, goal, pts, pend, max_score=10.0):
         if pend <= 0:
@@ -459,7 +548,7 @@ class DataStore:
 
 TAB_MAP = {
     'home': 'home',
-    'calc': 'calc',
+    'calc': 'home',
     'diary': 'home',
     'progress': 'home',
     'remind': 'home',
@@ -467,13 +556,41 @@ TAB_MAP = {
     'detail': 'subjects',
     'schedule': 'schedule',
     'import_schedule': 'schedule',
-    'profile': 'home',
-    'login': 'home'
+    'profile': 'profile',
+    'login': 'profile'
 }
 
 
-class CalcuBroApp(App):
+class StudyMateApp(App):
     active_tab = StringProperty('home')
+    current_theme = StringProperty('dark')
+    is_dark = BooleanProperty(True)
+
+    # Propiedades reactivas de colores para bind en .kv
+    bg_color = ColorProperty(DARK_THEME['bg_color'])
+    card_color = ColorProperty(DARK_THEME['card_color'])
+    card_border = ColorProperty(DARK_THEME['card_border'])
+    primary_color = ColorProperty(DARK_THEME['primary_color'])
+    primary_text = ColorProperty(DARK_THEME['primary_text'])
+    accent_blue = ColorProperty(DARK_THEME['accent_blue'])
+    text_primary = ColorProperty(DARK_THEME['text_primary'])
+    text_secondary = ColorProperty(DARK_THEME['text_secondary'])
+    nav_bg_color = ColorProperty(DARK_THEME['nav_bg_color'])
+    nav_border = ColorProperty(DARK_THEME['nav_border'])
+    input_bg = ColorProperty(DARK_THEME['input_bg'])
+    btn_pressed = ColorProperty(DARK_THEME['btn_pressed'])
+    green_color = ColorProperty(DARK_THEME['green_color'])
+    orange_color = ColorProperty(DARK_THEME['orange_color'])
+
+    # Versiones hexadecimales para markup en textos f"[color={app.text_primary_hex}]..."
+    bg_color_hex = StringProperty(DARK_THEME['bg_color_hex'])
+    card_color_hex = StringProperty(DARK_THEME['card_color_hex'])
+    text_primary_hex = StringProperty(DARK_THEME['text_primary_hex'])
+    text_secondary_hex = StringProperty(DARK_THEME['text_secondary_hex'])
+    accent_blue_hex = StringProperty(DARK_THEME['accent_blue_hex'])
+    primary_color_hex = StringProperty(DARK_THEME['primary_color_hex'])
+    green_color_hex = StringProperty(DARK_THEME['green_color_hex'])
+    orange_color_hex = StringProperty(DARK_THEME['orange_color_hex'])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -481,13 +598,12 @@ class CalcuBroApp(App):
         self.history_stack = []
 
     def build(self):
-        self.title = "CalcuBro"
+        self.title = "StudyMate"
 
         # Cargar estilos globales
         Builder.load_string(GLOBAL_KV)
 
-        # Cargar los 11 archivos .kv modulares
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # Cargar los 12 archivos .kv modulares
         kv_dir = os.path.join(base_dir, 'kv')
         kv_files = [
             'welcome.kv',
@@ -549,7 +665,63 @@ class CalcuBroApp(App):
             )
 
         self.root_layout.add_widget(self.toast_label)
+
+        # Aplicar el tema guardado en el DataStore
+        saved_theme = getattr(self.data_store, 'theme', 'dark')
+        self.apply_theme(saved_theme)
+
         return self.root_layout
+
+    def apply_theme(self, theme_name):
+        """Aplica la paleta de colores reactiva de forma inmediata y actualiza Window.clearcolor."""
+        palette = LIGHT_THEME if theme_name == 'light' else DARK_THEME
+        self.current_theme = theme_name
+        self.is_dark = (theme_name == 'dark')
+
+        self.bg_color = palette['bg_color']
+        self.card_color = palette['card_color']
+        self.card_border = palette['card_border']
+        self.primary_color = palette['primary_color']
+        self.primary_text = palette['primary_text']
+        self.accent_blue = palette['accent_blue']
+        self.text_primary = palette['text_primary']
+        self.text_secondary = palette['text_secondary']
+        self.nav_bg_color = palette['nav_bg_color']
+        self.nav_border = palette['nav_border']
+        self.input_bg = palette['input_bg']
+        self.btn_pressed = palette['btn_pressed']
+        self.green_color = palette['green_color']
+        self.orange_color = palette['orange_color']
+
+        self.bg_color_hex = palette['bg_color_hex']
+        self.card_color_hex = palette['card_color_hex']
+        self.text_primary_hex = palette['text_primary_hex']
+        self.text_secondary_hex = palette['text_secondary_hex']
+        self.accent_blue_hex = palette['accent_blue_hex']
+        self.primary_color_hex = palette['primary_color_hex']
+        self.green_color_hex = palette['green_color_hex']
+        self.orange_color_hex = palette['orange_color_hex']
+
+        Window.clearcolor = palette['bg_color']
+
+        if hasattr(self, 'data_store') and self.data_store:
+            self.data_store.theme = theme_name
+            self.data_store.save_data()
+
+        # Refrescar pantallas activas con contenido dinámico
+        if hasattr(self, 'sm') and self.sm:
+            for screen in self.sm.screens:
+                for meth in ('refresh_dashboard', 'refresh_subjects', 'refresh_classes', 'refresh_reminders', 'refresh_diary', 'refresh_progress', 'rebuild_grades_ui', 'refresh_view'):
+                    if hasattr(screen, meth):
+                        try:
+                            getattr(screen, meth)()
+                        except Exception:
+                            pass
+
+    def toggle_theme(self):
+        new_theme = 'light' if self.current_theme == 'dark' else 'dark'
+        self.apply_theme(new_theme)
+        return new_theme
 
     def go_screen(self, screen_name, clear_history=False, direction='left'):
         if clear_history:
@@ -582,8 +754,8 @@ class CalcuBroApp(App):
         self.toast_color.a = 0
 
 
-# Compatibilidad con imports previos
-StudyMateApp = CalcuBroApp
+# Compatibilidad retroactiva con imports de CalcuBroApp
+CalcuBroApp = StudyMateApp
 
 if __name__ == '__main__':
-    CalcuBroApp().run()
+    StudyMateApp().run()

@@ -6,7 +6,7 @@
         orientation: 'vertical'
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: app.bg_color
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -28,17 +28,17 @@
                     size: ('90dp', '32dp')
                     background_normal: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.545, 0.718, 1.0, 1)
+                    color: app.accent_blue
                     font_size: '15sp'
                     bold: True
                     on_release: app.go_back()
 
-                # Encabezado
+                # Encabezado con ícono outline bell (\ue7f5)
                 Label:
-                    text: "[font=MaterialIcons][/font]  [b]Recordatorios[/b]"
+                    text: "[font=MaterialIcons][/font]  [b]Recordatorios[/b]"
                     markup: True
                     font_size: '24sp'
-                    color: (0.957, 0.965, 0.980, 1)
+                    color: app.text_primary
                     halign: 'left'
                     valign: 'middle'
                     size_hint_y: None
@@ -48,7 +48,7 @@
                 Label:
                     text: "Clases, deberes, lecciones y entregas"
                     font_size: '13sp'
-                    color: (0.627, 0.682, 0.753, 1)
+                    color: app.text_secondary
                     halign: 'left'
                     valign: 'top'
                     size_hint_y: None
@@ -71,7 +71,7 @@
                 Label:
                     text: "Toca un elemento para configurar su recordatorio."
                     font_size: '12sp'
-                    color: (0.627, 0.682, 0.753, 1)
+                    color: app.text_secondary
                     halign: 'left'
                     size_hint_y: None
                     height: '24dp'

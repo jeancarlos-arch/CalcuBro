@@ -4,42 +4,52 @@
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.957, 0.965, 0.980, 1)
+    color: app.text_primary
     font_size: '20sp'
     bold: True
     canvas.before:
         Color:
-            rgba: (0.137, 0.192, 0.280, 1) if self.state == 'down' else (0.106, 0.149, 0.220, 1)
+            rgba: app.btn_pressed if self.state == 'down' else app.card_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(14)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <CalcOpButton@Button>:
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.545, 0.718, 1.0, 1)
+    color: app.accent_blue
     font_size: '20sp'
     bold: True
     canvas.before:
         Color:
-            rgba: (0.227, 0.300, 0.420, 1) if self.state == 'down' else (0.173, 0.227, 0.322, 1)
+            rgba: app.btn_pressed if self.state == 'down' else app.input_bg
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [dp(14)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <CalcActionButton@Button>:
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.063, 0.094, 0.153, 1)
+    color: app.primary_text
     font_size: '20sp'
     bold: True
     canvas.before:
         Color:
-            rgba: (0.27, 0.45, 0.80, 1) if self.state == 'down' else (0.337, 0.537, 0.910, 1)
+            rgba: app.primary_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -49,12 +59,12 @@
     background_normal: ''
     background_down: ''
     background_color: (0, 0, 0, 0)
-    color: (0.063, 0.094, 0.153, 1)
+    color: (1, 1, 1, 1)
     font_size: '20sp'
     bold: True
     canvas.before:
         Color:
-            rgba: (0.18, 0.68, 0.46, 1) if self.state == 'down' else (0.224, 0.788, 0.541, 1)
+            rgba: app.green_color
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -67,7 +77,7 @@
         orientation: 'vertical'
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: app.bg_color
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -90,7 +100,7 @@
                     size: ('85dp', '32dp')
                     background_normal: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.545, 0.718, 1.0, 1)
+                    color: app.accent_blue
                     font_size: '15sp'
                     bold: True
                     on_release: app.go_back()
@@ -99,7 +109,7 @@
                     text: "[font=MaterialIcons]\uea5f[/font]  [b]Calculadora[/b]"
                     markup: True
                     font_size: '20sp'
-                    color: (0.957, 0.965, 0.980, 1)
+                    color: app.text_primary
                     halign: 'center'
                     valign: 'middle'
 
@@ -115,13 +125,13 @@
                 padding: [2, 2]
                 canvas.before:
                     Color:
-                        rgba: (0.063, 0.094, 0.153, 1)
+                        rgba: app.input_bg
                     RoundedRectangle:
                         pos: self.pos
                         size: self.size
                         radius: [dp(14)]
                     Color:
-                        rgba: (0.173, 0.227, 0.322, 0.5)
+                        rgba: app.card_border
                     Line:
                         rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
                         width: dp(1)
@@ -134,10 +144,10 @@
                     background_normal: ''
                     background_down: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.063, 0.094, 0.153, 1) if root.active_calc_mode == 'weighted' else (0.627, 0.682, 0.753, 1)
+                    color: app.primary_text if root.active_calc_mode == 'weighted' else app.text_secondary
                     canvas.before:
                         Color:
-                            rgba: (0.337, 0.537, 0.910, 1) if root.active_calc_mode == 'weighted' else (0, 0, 0, 0)
+                            rgba: app.primary_color if root.active_calc_mode == 'weighted' else (0, 0, 0, 0)
                         RoundedRectangle:
                             pos: self.pos
                             size: self.size
@@ -152,10 +162,10 @@
                     background_normal: ''
                     background_down: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.063, 0.094, 0.153, 1) if root.active_calc_mode == 'standard' else (0.627, 0.682, 0.753, 1)
+                    color: app.primary_text if root.active_calc_mode == 'standard' else app.text_secondary
                     canvas.before:
                         Color:
-                            rgba: (0.337, 0.537, 0.910, 1) if root.active_calc_mode == 'standard' else (0, 0, 0, 0)
+                            rgba: app.primary_color if root.active_calc_mode == 'standard' else (0, 0, 0, 0)
                         RoundedRectangle:
                             pos: self.pos
                             size: self.size
@@ -184,7 +194,7 @@
                         markup: True
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '20dp'
                         halign: 'left'
@@ -202,7 +212,7 @@
                             Label:
                                 text: "Nota máx."
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                             StyledTextInput:
@@ -216,7 +226,7 @@
                             Label:
                                 text: "Mín. aprobar"
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                             StyledTextInput:
@@ -230,7 +240,7 @@
                             Label:
                                 text: "Meta personal"
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                             StyledTextInput:
@@ -262,7 +272,7 @@
                         markup: True
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '20dp'
                         halign: 'left'
@@ -271,7 +281,7 @@
                     Label:
                         text: f"¿Cuánto sacarías si obtienes cierta nota en el {root.pending_text} restante?"
                         font_size: '12sp'
-                        color: (0.627, 0.682, 0.753, 1)
+                        color: app.text_secondary
                         size_hint_y: None
                         height: '18dp'
                         halign: 'left'
@@ -285,7 +295,7 @@
 
                     Label:
                         text: root.sim_result_text
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         font_size: '12sp'
                         size_hint_y: None
                         height: '36dp' if root.sim_result_text else '0dp'
@@ -297,7 +307,7 @@
                 # 5. Resultados calculados automáticamente
                 DarkCard:
                     Label:
-                        text: f"[font=MaterialIcons]\ue002[/font]  [color=f2a65a][b]{root.warning_text}[/b][/color]" if root.warning_text else ""
+                        text: f"[font=MaterialIcons]\ue002[/font]  [color={app.orange_color_hex}][b]{root.warning_text}[/b][/color]" if root.warning_text else ""
                         markup: True
                         size_hint_y: None
                         height: '24dp' if root.warning_text else '0dp'
@@ -309,21 +319,21 @@
                         Label:
                             text: f"[font=MaterialIcons]\ue876[/font]  Evaluado: [b]{root.evaluated_text}[/b]"
                             markup: True
-                            color: (0.627, 0.682, 0.753, 1)
+                            color: app.text_secondary
                             font_size: '12sp'
                             halign: 'left'
                             text_size: self.size
                         Label:
                             text: f"Pendiente: [b]{root.pending_text}[/b]"
                             markup: True
-                            color: (0.627, 0.682, 0.753, 1)
+                            color: app.text_secondary
                             font_size: '12sp'
                             halign: 'right'
                             text_size: self.size
 
                     CustomProgressBar:
                         value: root.progress_percent
-                        bar_color: (0.224, 0.788, 0.541, 1)
+                        bar_color: app.green_color
 
                     BoxLayout:
                         size_hint_y: None
@@ -331,12 +341,12 @@
                         Label:
                             text: "[font=MaterialIcons]\ue6e1[/font]  Promedio ponderado"
                             markup: True
-                            color: (0.627, 0.682, 0.753, 1)
+                            color: app.text_secondary
                             font_size: '13sp'
                             halign: 'left'
                             text_size: self.size
                         Label:
-                            text: f"[color=8bb7ff][b]{root.current_avg_text}[/b][/color]"
+                            text: f"[color={app.accent_blue_hex}][b]{root.current_avg_text}[/b][/color]"
                             markup: True
                             font_size: '26sp'
                             halign: 'right'
@@ -347,7 +357,7 @@
                     Label:
                         text: f"[font=MaterialIcons]\ue8e5[/font]  Puntos: [b]{root.accum_pts_text}[/b]      Máx posible: [b]{root.max_possible_text}[/b]"
                         markup: True
-                        color: (0.627, 0.682, 0.753, 1)
+                        color: app.text_secondary
                         font_size: '11sp'
                         size_hint_y: None
                         height: '20dp'
@@ -355,7 +365,7 @@
                         text_size: self.width, None
 
                     Label:
-                        text: f"[font=MaterialIcons]\ue5ca[/font]  [color=39c98a]{root.min_status_text}[/color]"
+                        text: f"[font=MaterialIcons]\ue5ca[/font]  [color={app.green_color_hex}]{root.min_status_text}[/color]"
                         markup: True
                         font_size: '12sp'
                         size_hint_y: None
@@ -365,7 +375,7 @@
                         text_size: self.width, None
 
                     Label:
-                        text: f"[font=MaterialIcons]\ue838[/font]  [color=5689e8]{root.goal_status_text}[/color]"
+                        text: f"[font=MaterialIcons]\ue838[/font]  [color={app.primary_color_hex}]{root.goal_status_text}[/color]"
                         markup: True
                         font_size: '12sp'
                         size_hint_y: None
@@ -398,7 +408,7 @@
                 Label:
                     text: root.calc_expression
                     font_size: '15sp'
-                    color: (0.627, 0.682, 0.753, 1)
+                    color: app.text_secondary
                     halign: 'right'
                     valign: 'middle'
                     size_hint_y: None
@@ -409,7 +419,7 @@
                     text: root.calc_display
                     font_size: '34sp'
                     bold: True
-                    color: (0.957, 0.965, 0.980, 1)
+                    color: app.text_primary
                     halign: 'right'
                     valign: 'middle'
                     size_hint_y: None

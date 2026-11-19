@@ -7,9 +7,12 @@ from kivy.properties import StringProperty, NumericProperty
 from kivy.app import App
 
 
-def make_rounded_btn(text, bg_color, text_color, height='44dp', bold=True):
+def make_rounded_btn(text, bg_color, text_color=None, height='44dp', bold=True):
     """Crea un botón con esquinas redondeadas usando canvas."""
     from kivy.metrics import dp
+    app = App.get_running_app()
+    if text_color is None:
+        text_color = app.primary_text if app else (0.063, 0.094, 0.153, 1)
     btn = Button(
         text=text, size_hint_y=None, height=height,
         background_normal='', background_down='',
@@ -78,18 +81,33 @@ class AchievementsModal(ModalView):
         self.size_hint = (0.9, 0.72)
         self.auto_dismiss = True
 
+        app = App.get_running_app()
+        card_bg = app.card_color if app else (0.106, 0.149, 0.220, 1)
+        card_border = app.card_border if app else (0.173, 0.227, 0.322, 1)
+        input_bg = app.input_bg if app else (0.063, 0.094, 0.153, 1)
+        text_p = app.text_primary if app else (0.957, 0.965, 0.980, 1)
+        text_s = app.text_secondary if app else (0.627, 0.682, 0.753, 1)
+        accent_b = app.accent_blue if app else (0.545, 0.718, 1.0, 1)
+        green_hex = app.green_color_hex if app else '39c98a'
+        sec_hex = app.text_secondary_hex if app else 'a0aec0'
+
         root = BoxLayout(orientation='vertical', padding=16, spacing=10)
         with root.canvas.before:
-            from kivy.graphics import Color, RoundedRectangle
-            Color(0.106, 0.149, 0.220, 1)
+            from kivy.graphics import Color, RoundedRectangle, Line
+            Color(*card_bg)
             rect = RoundedRectangle(pos=root.pos, size=root.size, radius=[16])
-            root.bind(pos=lambda obj, val: setattr(rect, 'pos', val),
-                      size=lambda obj, val: setattr(rect, 'size', val))
+            Color(*card_border)
+            line = Line(rounded_rectangle=[root.x, root.y, root.width, root.height, 16], width=1)
+            def update_root(obj, val, r=rect, l=line):
+                r.pos = obj.pos
+                r.size = obj.size
+                l.rounded_rectangle = [obj.x, obj.y, obj.width, obj.height, 16]
+            root.bind(pos=update_root, size=update_root)
 
-        root.add_widget(Label(text="[b]Tus logros[/b]", markup=True, font_size='18sp', size_hint_y=None, height='32dp'))
+        root.add_widget(Label(text="[b]Tus logros[/b]", markup=True, font_size='18sp', size_hint_y=None, height='32dp', color=text_p))
 
-        store = App.get_running_app().data_store
-        achievements = compute_dynamic_achievements(store)
+        store = app.data_store if app else None
+        achievements = compute_dynamic_achievements(store) if store else []
 
         from kivy.uix.scrollview import ScrollView
         scroll = ScrollView(do_scroll_x=False)
@@ -100,15 +118,15 @@ class AchievementsModal(ModalView):
             row = BoxLayout(size_hint_y=None, height='44dp', padding=[10, 8])
             with row.canvas.before:
                 from kivy.graphics import Color as RColor, RoundedRectangle as RRect
-                RColor(0.063, 0.094, 0.153, 1)
+                RColor(*input_bg)
                 r_r = RRect(pos=row.pos, size=row.size, radius=[8])
                 row.bind(pos=lambda obj, val, r=r_r: setattr(r, 'pos', val),
                          size=lambda obj, val, r=r_r: setattr(r, 'size', val))
 
-            star_color = "39c98a" if completed else "a0aec0"
+            star_color = green_hex if completed else sec_hex
             star_icon = "" if completed else ""
             lbl = Label(text=f"[color={star_color}][font=MaterialIcons]{star_icon}[/font][/color]  {text}", markup=True,
-                        font_size='13sp', halign='left', valign='middle')
+                        font_size='13sp', halign='left', valign='middle', color=text_p)
             lbl.bind(size=lbl.setter('text_size'))
             row.add_widget(lbl)
             box_ach.add_widget(row)
@@ -116,7 +134,7 @@ class AchievementsModal(ModalView):
         scroll.add_widget(box_ach)
         root.add_widget(scroll)
 
-        btn_close = make_rounded_btn("Cerrar", (0.106, 0.149, 0.220, 1), (0.545, 0.718, 1.0, 1), height='42dp', bold=False)
+        btn_close = make_rounded_btn("Cerrar", card_bg, accent_b, height='42dp', bold=False)
         btn_close.bind(on_release=self.dismiss)
         root.add_widget(btn_close)
 
