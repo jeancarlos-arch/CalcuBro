@@ -5,35 +5,49 @@ from kivy.app import App
 
 class ProfileScreen(Screen):
     notifications_enabled = BooleanProperty(True)
+    is_dark_theme = BooleanProperty(True)
     user_name = StringProperty("Estudiante")
     user_career_sem = StringProperty("Toca abajo para registrar tus datos")
-    avatar_initial = StringProperty("\ue7fd")
+    avatar_initial = StringProperty("")
     avatar_is_icon = BooleanProperty(True)
 
     def on_pre_enter(self, *args):
         app = App.get_running_app()
-        if app and hasattr(app, 'data_store'):
-            store = app.data_store
-            self.notifications_enabled = store.global_notifications
+        if app:
+            self.is_dark_theme = (app.current_theme == 'dark')
+            if hasattr(app, 'data_store'):
+                store = app.data_store
+                self.notifications_enabled = store.global_notifications
 
-            name = store.student_name.strip() if store.student_name else ""
-            if name:
-                self.user_name = name
-                self.avatar_initial = name[0].upper()
-                self.avatar_is_icon = False
-            else:
-                self.user_name = "Estudiante"
-                self.avatar_initial = "\ue7fd"
-                self.avatar_is_icon = True
+                name = store.student_name.strip() if store.student_name else ""
+                if name:
+                    self.user_name = name
+                    self.avatar_initial = name[0].upper()
+                    self.avatar_is_icon = False
+                else:
+                    self.user_name = "Estudiante"
+                    self.avatar_initial = ""
+                    self.avatar_is_icon = True
 
-            career = store.student_career.strip() if store.student_career else ""
-            sem = store.student_semester.strip() if store.student_semester else ""
-            if career and sem:
-                self.user_career_sem = f"{career} · {sem}"
-            elif career or sem:
-                self.user_career_sem = f"{career}{sem}"
-            else:
-                self.user_career_sem = "Toca abajo para registrar tus datos"
+                career = store.student_career.strip() if store.student_career else ""
+                sem = store.student_semester.strip() if store.student_semester else ""
+                if career and sem:
+                    self.user_career_sem = f"{career} · {sem}"
+                elif career or sem:
+                    self.user_career_sem = f"{career}{sem}"
+                else:
+                    self.user_career_sem = "Toca abajo para registrar tus datos"
+
+    def set_theme_mode(self, theme_mode):
+        app = App.get_running_app()
+        if app:
+            app.apply_theme(theme_mode)
+            self.is_dark_theme = (theme_mode == 'dark')
+            app.show_toast(f"Modo {'Oscuro' if self.is_dark_theme else 'Claro'} activado")
+
+    def toggle_theme_switch(self, is_dark):
+        theme_mode = 'dark' if is_dark else 'light'
+        self.set_theme_mode(theme_mode)
 
     def toggle_notifications(self, is_active):
         self.notifications_enabled = is_active

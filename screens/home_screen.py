@@ -18,6 +18,11 @@ class HomeScreen(Screen):
     subjects_count_text = StringProperty("0 materias registradas")
     progress_percent = NumericProperty(0)
     progress_avg_text = StringProperty("0.00")
+    motivational_text = StringProperty("¡Vas muy bien, cada paso cuenta!")
+
+    # Pendientes de hoy
+    reminders_count_text = StringProperty("0 actividades")
+    reminders_summary_text = StringProperty("No tienes pendientes programados")
 
     def on_pre_enter(self, *args):
         self.refresh_dashboard()
@@ -70,7 +75,18 @@ class HomeScreen(Screen):
             self.active_class_time = f"{today_name} · Sin horario activo"
             self.next_class_info = "Organiza tu semana en la pestaña Horario"
 
-        # 3. Materias y promedio general
+        # 3. Pendientes de hoy (Recordatorios)
+        active_rems = [r for r in store.reminders if r.get('on', 0)] or store.reminders
+        if active_rems:
+            cnt = len(active_rems)
+            self.reminders_count_text = f"{cnt} {'actividad' if cnt == 1 else 'actividades'}"
+            top2 = active_rems[:2]
+            self.reminders_summary_text = "\n".join([f"• {r.get('t', '')} · {r.get('d', '')}" for r in top2])
+        else:
+            self.reminders_count_text = "0 actividades"
+            self.reminders_summary_text = "No tienes pendientes para hoy. ¡Todo al día!"
+
+        # 4. Materias y progreso general del semestre
         subjects = store.subjects
         count = len(subjects)
         self.subjects_count_text = f"{count} {'materia' if count == 1 else 'materias'} en curso"
@@ -80,9 +96,11 @@ class HomeScreen(Screen):
             adv = store.get_general_adv()
             self.progress_percent = int(round(adv))
             self.progress_avg_text = f"{avg:.2f}"
+            self.motivational_text = f"Promedio general {avg:.2f}. ¡Vas muy bien, cada paso cuenta!"
         else:
             self.progress_percent = 0
             self.progress_avg_text = "0.00"
+            self.motivational_text = "Registra tus materias para monitorear tu progreso académico."
 
     def navigate(self, screen_name):
         app = App.get_running_app()

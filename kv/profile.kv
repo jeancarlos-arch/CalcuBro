@@ -6,7 +6,7 @@
         orientation: 'vertical'
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: app.bg_color
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -25,7 +25,7 @@
                     text: "[b]Perfil[/b]"
                     markup: True
                     font_size: '24sp'
-                    color: (0.957, 0.965, 0.980, 1)
+                    color: app.text_primary
                     halign: 'left'
                     valign: 'middle'
                     size_hint_y: None
@@ -45,12 +45,12 @@
                             font_name: 'MaterialIcons' if root.avatar_is_icon else 'Roboto'
                             font_size: '26sp' if root.avatar_is_icon else '22sp'
                             bold: True
-                            color: (0.063, 0.094, 0.153, 1)
+                            color: app.primary_text
                             size_hint: (None, None)
                             size: ('50dp', '50dp')
                             canvas.before:
                                 Color:
-                                    rgba: (0.337, 0.537, 0.910, 1)
+                                    rgba: app.primary_color
                                 Ellipse:
                                     pos: self.pos
                                     size: self.size
@@ -62,57 +62,143 @@
                                 text: f"[b]{root.user_name}[/b]"
                                 markup: True
                                 font_size: '16sp'
+                                color: app.text_primary
                                 halign: 'left'
                                 valign: 'middle'
                                 text_size: self.size
                             Label:
                                 text: root.user_career_sem
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 font_size: '12sp'
                                 halign: 'left'
                                 valign: 'middle'
                                 text_size: self.size
 
-                # Enlaces de Navegación
+                # Enlaces de Navegación fieles al prototipo
                 ProfileLinkCard:
-                    icon_text: "\ue3c9"
+                    icon_text: ""
                     link_title: "Editar datos de estudiante / Login"
                     on_release: root.navigate('login')
 
                 ProfileLinkCard:
-                    icon_text: "\ue7f4"
+                    icon_text: ""
                     link_title: "Recordatorios"
                     on_release: root.navigate('remind')
 
                 ProfileLinkCard:
-                    icon_text: "\ue26b"
+                    icon_text: ""
                     link_title: "Progreso"
                     on_release: root.navigate('progress')
 
                 ProfileLinkCard:
-                    icon_text: "\ue8cd"
+                    icon_text: ""
                     link_title: "Diario personal"
                     on_release: root.navigate('diary')
 
                 ProfileLinkCard:
-                    icon_text: "\uea5f"
+                    icon_text: ""
                     link_title: "Calculadora"
                     on_release: root.navigate('calc')
+
+                # Sección Apariencia / Selector de Tema (Modo Claro / Modo Oscuro)
+                DarkCard:
+                    spacing: dp(10)
+                    BoxLayout:
+                        size_hint_y: None
+                        height: '32dp'
+                        Label:
+                            text: "[font=MaterialIcons][/font]  [b]Apariencia / Tema[/b]"
+                            markup: True
+                            font_size: '14sp'
+                            color: app.text_primary
+                            halign: 'left'
+                            text_size: self.size
+                        RoundedSwitch:
+                            active: root.is_dark_theme
+                            on_active: root.toggle_theme_switch(self.active)
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: '20dp'
+                        Label:
+                            text: "Tema actual: Modo Oscuro" if root.is_dark_theme else "Tema actual: Modo Claro"
+                            font_size: '12sp'
+                            color: app.text_secondary
+                            halign: 'left'
+                            text_size: self.size
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: '38dp'
+                        spacing: dp(10)
+
+                        Button:
+                            text: "[font=MaterialIcons][/font]  Modo Claro"
+                            markup: True
+                            font_size: '13sp'
+                            bold: True
+                            background_normal: ''
+                            background_down: ''
+                            background_color: (0, 0, 0, 0)
+                            color: app.primary_text if not root.is_dark_theme else app.text_secondary
+                            canvas.before:
+                                Color:
+                                    rgba: app.primary_color if not root.is_dark_theme else app.btn_pressed
+                                RoundedRectangle:
+                                    pos: self.pos
+                                    size: self.size
+                                    radius: [dp(10)]
+                                Color:
+                                    rgba: app.card_border
+                                Line:
+                                    rounded_rectangle: [self.x, self.y, self.width, self.height, dp(10)]
+                                    width: dp(1)
+                            on_release: root.set_theme_mode('light')
+
+                        Button:
+                            text: "[font=MaterialIcons][/font]  Modo Oscuro"
+                            markup: True
+                            font_size: '13sp'
+                            bold: True
+                            background_normal: ''
+                            background_down: ''
+                            background_color: (0, 0, 0, 0)
+                            color: app.primary_text if root.is_dark_theme else app.text_secondary
+                            canvas.before:
+                                Color:
+                                    rgba: app.primary_color if root.is_dark_theme else app.btn_pressed
+                                RoundedRectangle:
+                                    pos: self.pos
+                                    size: self.size
+                                    radius: [dp(10)]
+                                Color:
+                                    rgba: app.card_border
+                                Line:
+                                    rounded_rectangle: [self.x, self.y, self.width, self.height, dp(10)]
+                                    width: dp(1)
+                            on_release: root.set_theme_mode('dark')
 
                 # Ajuste de Notificaciones
                 DarkCard:
                     BoxLayout:
                         size_hint_y: None
-                        height: '36dp'
+                        height: '32dp'
                         Label:
-                            text: "Notificaciones del sistema"
+                            text: "[b]Notificaciones del sistema[/b]"
+                            markup: True
                             font_size: '14sp'
+                            color: app.text_primary
                             halign: 'left'
                             text_size: self.size
-                        Switch:
+                        RoundedSwitch:
                             active: root.notifications_enabled
-                            size_hint_x: None
-                            width: '80dp'
                             on_active: root.toggle_notifications(self.active)
+
+                    Label:
+                        text: "Avisos automáticos de clases y tareas"
+                        font_size: '12sp'
+                        color: app.text_secondary
+                        halign: 'left'
+                        text_size: self.size
 
         NavBar:

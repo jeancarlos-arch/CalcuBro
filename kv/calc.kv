@@ -2,24 +2,73 @@
 
 <CalcKeyButton@Button>:
     background_normal: ''
-    background_color: (0.106, 0.149, 0.220, 1)
-    color: (0.957, 0.965, 0.980, 1)
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    color: app.text_primary
     font_size: '20sp'
     bold: True
+    canvas.before:
+        Color:
+            rgba: app.btn_pressed if self.state == 'down' else app.card_color
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <CalcOpButton@Button>:
     background_normal: ''
-    background_color: (0.173, 0.227, 0.322, 1)
-    color: (0.545, 0.718, 1.0, 1)
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    color: app.accent_blue
     font_size: '20sp'
     bold: True
+    canvas.before:
+        Color:
+            rgba: app.btn_pressed if self.state == 'down' else app.input_bg
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+        Color:
+            rgba: app.card_border
+        Line:
+            rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+            width: dp(1)
 
 <CalcActionButton@Button>:
     background_normal: ''
-    background_color: (0.337, 0.537, 0.910, 1)
-    color: (0.063, 0.094, 0.153, 1)
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    color: app.primary_text
     font_size: '20sp'
     bold: True
+    canvas.before:
+        Color:
+            rgba: app.primary_color
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
+
+<CalcEqualButton@Button>:
+    background_normal: ''
+    background_down: ''
+    background_color: (0, 0, 0, 0)
+    color: (1, 1, 1, 1)
+    font_size: '20sp'
+    bold: True
+    canvas.before:
+        Color:
+            rgba: app.green_color
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(14)]
 
 
 <CalcScreen>:
@@ -28,7 +77,7 @@
         orientation: 'vertical'
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: app.bg_color
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -37,30 +86,30 @@
         BoxLayout:
             orientation: 'vertical'
             size_hint_y: None
-            height: '110dp'
-            padding: [20, 12, 20, 8]
-            spacing: 10
+            height: '106dp'
+            padding: [20, 12, 20, 6]
+            spacing: 8
 
             BoxLayout:
                 size_hint_y: None
                 height: '32dp'
                 Button:
-                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    text: "[font=MaterialIcons]\ue5cb[/font]  Volver"
                     markup: True
                     size_hint: (None, None)
                     size: ('85dp', '32dp')
                     background_normal: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.545, 0.718, 1.0, 1)
+                    color: app.accent_blue
                     font_size: '15sp'
                     bold: True
                     on_release: app.go_back()
 
                 Label:
-                    text: "[b]Calculadora[/b]"
+                    text: "[font=MaterialIcons]\uea5f[/font]  [b]Calculadora[/b]"
                     markup: True
-                    font_size: '22sp'
-                    color: (0.957, 0.965, 0.980, 1)
+                    font_size: '20sp'
+                    color: app.text_primary
                     halign: 'center'
                     valign: 'middle'
 
@@ -72,50 +121,80 @@
             BoxLayout:
                 size_hint_y: None
                 height: '42dp'
-                spacing: 8
-                padding: [4, 2]
+                spacing: 6
+                padding: [2, 2]
+                canvas.before:
+                    Color:
+                        rgba: app.input_bg
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(14)]
+                    Color:
+                        rgba: app.card_border
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+                        width: dp(1)
 
                 Button:
-                    text: "[font=MaterialIcons]\\ue26b[/font]  Promedio Ponderado"
+                    text: "[font=MaterialIcons]\ue26b[/font]  Ponderada"
                     markup: True
                     font_size: '13sp'
                     bold: True
                     background_normal: ''
-                    background_color: (0.337, 0.537, 0.910, 1) if root.active_calc_mode == 'weighted' else (0.106, 0.149, 0.220, 1)
-                    color: (0.063, 0.094, 0.153, 1) if root.active_calc_mode == 'weighted' else (0.627, 0.682, 0.753, 1)
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    color: app.primary_text if root.active_calc_mode == 'weighted' else app.text_secondary
+                    canvas.before:
+                        Color:
+                            rgba: app.primary_color if root.active_calc_mode == 'weighted' else (0, 0, 0, 0)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(12)]
                     on_release: root.set_mode('weighted')
 
                 Button:
-                    text: "[font=MaterialIcons]\\uea5f[/font]  Calculadora Básica"
+                    text: "[font=MaterialIcons]\uea5f[/font]  Básica"
                     markup: True
                     font_size: '13sp'
                     bold: True
                     background_normal: ''
-                    background_color: (0.337, 0.537, 0.910, 1) if root.active_calc_mode == 'standard' else (0.106, 0.149, 0.220, 1)
-                    color: (0.063, 0.094, 0.153, 1) if root.active_calc_mode == 'standard' else (0.627, 0.682, 0.753, 1)
+                    background_down: ''
+                    background_color: (0, 0, 0, 0)
+                    color: app.primary_text if root.active_calc_mode == 'standard' else app.text_secondary
+                    canvas.before:
+                        Color:
+                            rgba: app.primary_color if root.active_calc_mode == 'standard' else (0, 0, 0, 0)
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(12)]
                     on_release: root.set_mode('standard')
 
-        # VISTA 1: CALCULADORA ACADÉMICA PONDERADA
+        # ===== VISTA 1: CALCULADORA ACADÉMICA PONDERADA =====
         ScrollView:
             do_scroll_x: False
             opacity: 1 if root.active_calc_mode == 'weighted' else 0
-            size_hint_y: 1 if root.active_calc_mode == 'weighted' else 0
+            size_hint_y: 1 if root.active_calc_mode == 'weighted' else None
+            height: 0 if root.active_calc_mode != 'weighted' else self.height
             disabled: root.active_calc_mode != 'weighted'
 
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                padding: [20, 8]
+                padding: [20, 10]
                 spacing: 12
 
-                # Parámetros de Escala
+                # 1. Escala Académica
                 DarkCard:
                     Label:
-                        text: "Escala Académica"
+                        text: "[font=MaterialIcons]\ue39e[/font]  Escala Académica"
+                        markup: True
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '20dp'
                         halign: 'left'
@@ -133,7 +212,7 @@
                             Label:
                                 text: "Nota máx."
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                             StyledTextInput:
@@ -147,7 +226,7 @@
                             Label:
                                 text: "Mín. aprobar"
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                             StyledTextInput:
@@ -161,7 +240,7 @@
                             Label:
                                 text: "Meta personal"
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                             StyledTextInput:
@@ -169,38 +248,7 @@
                                 input_filter: 'float'
                                 on_text: root.scale_goal = float(self.text or 8.5); root.calculate_results(silent=True)
 
-                # Barra de herramientas de acciones rápidas
-                GridLayout:
-                    cols: 2
-                    size_hint_y: None
-                    height: '84dp'
-                    spacing: 8
-
-                    GhostButton:
-                        text: "[font=MaterialIcons]\\ue145[/font]  Agregar nota"
-                        markup: True
-                        font_size: '13sp'
-                        on_release: root.add_grade()
-
-                    GhostButton:
-                        text: "[font=MaterialIcons]\\ueaf6[/font]  Repartir % igual"
-                        markup: True
-                        font_size: '13sp'
-                        on_release: root.distribute_weights_equally()
-
-                    GhostButton:
-                        text: "[font=MaterialIcons]\\ue865[/font]  Cargar de materias"
-                        markup: True
-                        font_size: '13sp'
-                        on_release: root.load_from_subject()
-
-                    DangerButton:
-                        text: "[font=MaterialIcons]\\ue872[/font]  Vaciar lista"
-                        markup: True
-                        font_size: '13sp'
-                        on_release: root.clear_all_grades()
-
-                # Lista dinámica de evaluaciones
+                # 2. Lista dinámica de evaluaciones
                 BoxLayout:
                     id: grades_container
                     orientation: 'vertical'
@@ -208,14 +256,23 @@
                     height: self.minimum_height
                     spacing: 8
 
-                # Simulador de nota en lo pendiente
+                # 3. Botón Agregar nota
+                GhostButton:
+                    text: "[font=MaterialIcons]\ue145[/font]  Agregar nota"
+                    markup: True
+                    font_size: '14sp'
+                    size_hint_y: None
+                    height: '46dp'
+                    on_release: root.add_grade()
+
+                # 4. Simulador de nota en lo pendiente
                 DarkCard:
                     Label:
-                        text: "[font=MaterialIcons]\\ue65f[/font]  Simular nota en lo pendiente"
+                        text: "[font=MaterialIcons]\ue65f[/font]  Simular nota en lo pendiente"
                         markup: True
                         font_size: '13sp'
                         bold: True
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         size_hint_y: None
                         height: '20dp'
                         halign: 'left'
@@ -224,7 +281,7 @@
                     Label:
                         text: f"¿Cuánto sacarías si obtienes cierta nota en el {root.pending_text} restante?"
                         font_size: '12sp'
-                        color: (0.627, 0.682, 0.753, 1)
+                        color: app.text_secondary
                         size_hint_y: None
                         height: '18dp'
                         halign: 'left'
@@ -238,129 +295,112 @@
 
                     Label:
                         text: root.sim_result_text
-                        color: (0.545, 0.718, 1.0, 1)
+                        color: app.accent_blue
                         font_size: '12sp'
                         size_hint_y: None
-                        height: '32dp' if root.sim_result_text else '0dp'
+                        height: '36dp' if root.sim_result_text else '0dp'
                         opacity: 1 if root.sim_result_text else 0
                         halign: 'left'
                         valign: 'middle'
-                        text_size: self.size
+                        text_size: self.width, None
 
-                # Bloque de Resultados
+                # 5. Resultados calculados automáticamente
                 DarkCard:
-                    # Alerta si pesos superan el 100%
                     Label:
-                        text: f"[color=f2a65a][b]{root.warning_text}[/b][/color]" if root.warning_text else ""
+                        text: f"[font=MaterialIcons]\ue002[/font]  [color={app.orange_color_hex}][b]{root.warning_text}[/b][/color]" if root.warning_text else ""
                         markup: True
                         size_hint_y: None
                         height: '24dp' if root.warning_text else '0dp'
                         opacity: 1 if root.warning_text else 0
 
-                    # Porcentaje evaluado con barra de progreso
                     BoxLayout:
                         size_hint_y: None
-                        height: '24dp'
+                        height: '22dp'
                         Label:
-                            text: f"Evaluado: [b]{root.evaluated_text}[/b]"
+                            text: f"[font=MaterialIcons]\ue876[/font]  Evaluado: [b]{root.evaluated_text}[/b]"
                             markup: True
-                            color: (0.627, 0.682, 0.753, 1)
-                            font_size: '13sp'
+                            color: app.text_secondary
+                            font_size: '12sp'
                             halign: 'left'
                             text_size: self.size
                         Label:
                             text: f"Pendiente: [b]{root.pending_text}[/b]"
                             markup: True
-                            color: (0.627, 0.682, 0.753, 1)
-                            font_size: '13sp'
+                            color: app.text_secondary
+                            font_size: '12sp'
                             halign: 'right'
                             text_size: self.size
 
                     CustomProgressBar:
                         value: root.progress_percent
-                        bar_color: (0.224, 0.788, 0.541, 1)
+                        bar_color: app.green_color
 
-                    # Promedio y Badge
                     BoxLayout:
                         size_hint_y: None
-                        height: '38dp'
+                        height: '42dp'
                         Label:
-                            text: "Promedio ponderado"
-                            color: (0.627, 0.682, 0.753, 1)
+                            text: "[font=MaterialIcons]\ue6e1[/font]  Promedio ponderado"
+                            markup: True
+                            color: app.text_secondary
                             font_size: '13sp'
                             halign: 'left'
                             text_size: self.size
                         Label:
-                            text: f"[color=8bb7ff][b]{root.current_avg_text}[/b][/color]"
+                            text: f"[color={app.accent_blue_hex}][b]{root.current_avg_text}[/b][/color]"
                             markup: True
-                            font_size: '22sp'
+                            font_size: '26sp'
                             halign: 'right'
                             size_hint_x: None
                             width: '90dp'
                             text_size: self.size
 
-                    # Puntos y Nota Máxima
                     Label:
-                        text: f"Puntos ganados: [b]{root.accum_pts_text}[/b]"
+                        text: f"[font=MaterialIcons]\ue8e5[/font]  Puntos: [b]{root.accum_pts_text}[/b]      Máx posible: [b]{root.max_possible_text}[/b]"
                         markup: True
-                        color: (0.627, 0.682, 0.753, 1)
-                        font_size: '12sp'
+                        color: app.text_secondary
+                        font_size: '11sp'
                         size_hint_y: None
-                        height: '18dp'
+                        height: '20dp'
                         halign: 'left'
-                        text_size: self.size
+                        text_size: self.width, None
 
                     Label:
-                        text: f"Nota máxima posible al final: [b]{root.max_possible_text}[/b]"
-                        markup: True
-                        color: (0.957, 0.965, 0.980, 1)
-                        font_size: '13sp'
-                        size_hint_y: None
-                        height: '22dp'
-                        halign: 'left'
-                        text_size: self.size
-
-                    # Predicciones
-                    Label:
-                        text: f"[color=39c98a]{root.min_status_text}[/color]"
+                        text: f"[font=MaterialIcons]\ue5ca[/font]  [color={app.green_color_hex}]{root.min_status_text}[/color]"
                         markup: True
                         font_size: '12sp'
                         size_hint_y: None
-                        height: '22dp'
+                        height: '24dp'
                         halign: 'left'
-                        text_size: self.size
+                        valign: 'middle'
+                        text_size: self.width, None
 
                     Label:
-                        text: f"[color=5689e8]{root.goal_status_text}[/color]"
+                        text: f"[font=MaterialIcons]\ue838[/font]  [color={app.primary_color_hex}]{root.goal_status_text}[/color]"
                         markup: True
                         font_size: '12sp'
                         size_hint_y: None
-                        height: '22dp'
+                        height: '24dp'
                         halign: 'left'
-                        text_size: self.size
-
-                # Botón de Restablecer ejemplo
-                GhostButton:
-                    text: "[font=MaterialIcons]\\ue863[/font]  Restablecer ejemplo inicial"
-                    markup: True
-                    on_release: root.reset_example()
+                        valign: 'middle'
+                        text_size: self.width, None
 
                 Widget:
                     size_hint_y: None
                     height: '20dp'
 
-        # VISTA 2: CALCULADORA BÁSICA (ARITMÉTICA)
+        # ===== VISTA 2: CALCULADORA BÁSICA (ARITMÉTICA) =====
         BoxLayout:
             orientation: 'vertical'
             opacity: 1 if root.active_calc_mode == 'standard' else 0
-            size_hint_y: 1 if root.active_calc_mode == 'standard' else 0
+            size_hint_y: 1 if root.active_calc_mode == 'standard' else None
+            height: 0 if root.active_calc_mode != 'standard' else self.height
             disabled: root.active_calc_mode != 'standard'
             padding: [20, 10, 20, 16]
-            spacing: 12
+            spacing: 10
 
             # Pantalla Digital de la Calculadora
             DarkCard:
-                padding: [16, 14]
+                padding: [20, 16]
                 spacing: 6
                 size_hint_y: None
                 height: '110dp'
@@ -368,7 +408,7 @@
                 Label:
                     text: root.calc_expression
                     font_size: '15sp'
-                    color: (0.627, 0.682, 0.753, 1)
+                    color: app.text_secondary
                     halign: 'right'
                     valign: 'middle'
                     size_hint_y: None
@@ -379,7 +419,7 @@
                     text: root.calc_display
                     font_size: '34sp'
                     bold: True
-                    color: (0.957, 0.965, 0.980, 1)
+                    color: app.text_primary
                     halign: 'right'
                     valign: 'middle'
                     size_hint_y: None
@@ -460,10 +500,8 @@
                 CalcKeyButton:
                     text: "."
                     on_release: root.on_key_press('.')
-                CalcActionButton:
+                CalcEqualButton:
                     text: "="
-                    background_color: (0.224, 0.788, 0.541, 1) # Verde éxito
-                    color: (0.063, 0.094, 0.153, 1)
                     on_release: root.on_key_press('=')
 
         NavBar:

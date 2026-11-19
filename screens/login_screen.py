@@ -14,14 +14,18 @@ class LoginScreen(Screen):
             self.ids.input_name.text = store.student_name
         if 'input_career' in self.ids and store.student_career:
             self.ids.input_career.text = store.student_career
-        if 'input_semester' in self.ids and store.student_semester:
-            self.ids.input_semester.text = store.student_semester
+        if 'input_semester' in self.ids:
+            if store.student_semester:
+                self.ids.input_semester.text = store.student_semester
+            else:
+                self.ids.input_semester.text = "Selecciona tu semestre"
 
     def submit_login(self):
         app = App.get_running_app()
         name = self.ids.input_name.text.strip() if 'input_name' in self.ids else ""
         career = self.ids.input_career.text.strip() if 'input_career' in self.ids else ""
-        semester = self.ids.input_semester.text.strip() if 'input_semester' in self.ids else ""
+        raw_semester = self.ids.input_semester.text if 'input_semester' in self.ids else ""
+        semester = "" if raw_semester == "Selecciona tu semestre" else raw_semester
 
         if not name:
             app.show_toast("Por favor ingresa tu nombre")
@@ -32,6 +36,7 @@ class LoginScreen(Screen):
         store.student_career = career
         store.student_semester = semester
         store.is_logged_in = True
+        store.save_data()
 
         first_name = name.split()[0]
         app.show_toast(f"¡Bienvenido/a, {first_name}!")

@@ -6,7 +6,7 @@
         orientation: 'vertical'
         canvas.before:
             Color:
-                rgba: (0.063, 0.094, 0.153, 1) # --bg
+                rgba: app.bg_color
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -22,13 +22,13 @@
 
                 # Botón Volver
                 Button:
-                    text: "[font=MaterialIcons]\\ue5cb[/font]  Volver"
+                    text: "[font=MaterialIcons][/font]  Volver"
                     markup: True
                     size_hint: (None, None)
                     size: ('90dp', '32dp')
                     background_normal: ''
                     background_color: (0, 0, 0, 0)
-                    color: (0.545, 0.718, 1.0, 1)
+                    color: app.accent_blue
                     font_size: '15sp'
                     bold: True
                     on_release: app.go_back()
@@ -38,7 +38,7 @@
                     text: f"[b]{root.subject_title}[/b]"
                     markup: True
                     font_size: '24sp'
-                    color: (0.957, 0.965, 0.980, 1)
+                    color: app.text_primary
                     halign: 'left'
                     valign: 'middle'
                     size_hint_y: None
@@ -54,7 +54,7 @@
                         text: "Docente:"
                         size_hint_x: None
                         width: '65dp'
-                        color: (0.627, 0.682, 0.753, 1)
+                        color: app.text_secondary
                         font_size: '13sp'
                         halign: 'left'
                         text_size: self.size
@@ -70,14 +70,14 @@
                         height: '36dp'
                         Label:
                             text: "Promedio actual"
-                            color: (0.627, 0.682, 0.753, 1)
+                            color: app.text_secondary
                             font_size: '14sp'
                             halign: 'left'
                             text_size: self.size
                         Label:
                             text: f"[b]{root.current_avg:.2f}[/b]"
                             markup: True
-                            color: (0.224, 0.788, 0.541, 1) if root.current_avg >= 7.0 else (0.949, 0.651, 0.353, 1)
+                            color: app.green_color if root.current_avg >= 7.0 else app.orange_color
                             font_size: '26sp'
                             halign: 'right'
                             size_hint_x: None
@@ -89,20 +89,20 @@
                         height: '20dp'
                         Label:
                             text: f"Evaluado: {root.evaluated_percent:.0f}%"
-                            color: (0.627, 0.682, 0.753, 1)
+                            color: app.text_secondary
                             font_size: '12sp'
                             halign: 'left'
                             text_size: self.size
                         Label:
                             text: f"Pendiente: {root.pending_percent:.0f}%"
-                            color: (0.627, 0.682, 0.753, 1)
+                            color: app.text_secondary
                             font_size: '12sp'
                             halign: 'right'
                             text_size: self.size
 
                     CustomProgressBar:
                         value: root.evaluated_percent
-                        bar_color: (0.224, 0.788, 0.541, 1)
+                        bar_color: app.green_color
 
                     GridLayout:
                         cols: 2
@@ -115,7 +115,7 @@
                             Label:
                                 text: "Nota mínima"
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                                 halign: 'left'
@@ -131,7 +131,7 @@
                             Label:
                                 text: "Nota objetivo"
                                 font_size: '11sp'
-                                color: (0.627, 0.682, 0.753, 1)
+                                color: app.text_secondary
                                 size_hint_y: None
                                 height: '16dp'
                                 halign: 'left'
@@ -144,24 +144,24 @@
                 # Tarjeta Diagnóstico
                 DarkCard:
                     Label:
-                        text: f"[color=39c98a]{root.goal_status_text}[/color]"
+                        text: f"[color={app.green_color_hex}]{root.goal_status_text}[/color]"
                         markup: True
                         font_size: '13sp'
                         halign: 'left'
                         valign: 'middle'
                         size_hint_y: None
-                        height: '24dp'
-                        text_size: self.size
+                        height: '32dp'
+                        text_size: self.width, None
 
                     Label:
-                        text: f"[color=f2a65a]{root.min_status_text}[/color]"
+                        text: f"[color={app.orange_color_hex}]{root.min_status_text}[/color]"
                         markup: True
                         font_size: '13sp'
                         halign: 'left'
                         valign: 'middle'
                         size_hint_y: None
-                        height: '24dp'
-                        text_size: self.size
+                        height: '32dp'
+                        text_size: self.width, None
 
                 # Contenedor dinámico de categorías
                 BoxLayout:
@@ -173,11 +173,13 @@
 
                 # Botones de acción
                 PrimaryButton:
-                    text: "+ Registrar evaluación"
+                    text: "[font=MaterialIcons][/font]  Registrar evaluación"
+                    markup: True
                     on_release: root.open_evaluation_modal(0, -1)
 
                 GhostButton:
-                    text: "+ Nueva categoría"
+                    text: "[font=MaterialIcons][/font]  Nueva categoría"
+                    markup: True
                     on_release: root.open_new_category_modal()
 
         NavBar:
