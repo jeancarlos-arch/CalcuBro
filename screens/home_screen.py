@@ -7,6 +7,7 @@ from kivy.app import App
 class HomeScreen(Screen):
     greeting_text = StringProperty("Buenos días")
     student_subtitle = StringProperty("")
+    choclito_bubble_text = StringProperty("¡Hola! Revisa tu día y sigue sumando avances.")
 
     # Horario dinámico de hoy
     active_class_name = StringProperty("Sin clases programadas")
@@ -36,8 +37,8 @@ class HomeScreen(Screen):
 
         # 1. Datos del estudiante
         raw_name = store.student_name.strip() if store.student_name else ""
-        if raw_name:
-            first_name = raw_name.split()[0]
+        first_name = raw_name.split()[0] if raw_name else ""
+        if first_name:
             self.greeting_text = f"Buenos días, {first_name}"
         else:
             self.greeting_text = "Buenos días"
@@ -77,8 +78,8 @@ class HomeScreen(Screen):
 
         # 3. Pendientes de hoy (Recordatorios)
         active_rems = [r for r in store.reminders if r.get('on', 0)] or store.reminders
+        cnt = len(active_rems)
         if active_rems:
-            cnt = len(active_rems)
             self.reminders_count_text = f"{cnt} {'actividad' if cnt == 1 else 'actividades'}"
             top2 = active_rems[:2]
             self.reminders_summary_text = "\n".join([f"• {r.get('t', '')} · {r.get('d', '')}" for r in top2])
@@ -98,9 +99,26 @@ class HomeScreen(Screen):
             self.progress_avg_text = f"{avg:.2f}"
             self.motivational_text = f"Promedio general {avg:.2f}. ¡Vas muy bien, cada paso cuenta!"
         else:
+            avg = None
             self.progress_percent = 0
             self.progress_avg_text = "0.00"
             self.motivational_text = "Registra tus materias para monitorear tu progreso académico."
+
+        # 5. Mensaje dinámico de Choclito adaptado al usuario
+        name_suffix = f", {first_name}" if first_name else ""
+        pending_phrase = (
+            "no tienes pendientes activos"
+            if cnt == 0
+            else f"tienes {cnt} {'pendiente' if cnt == 1 else 'pendientes'}"
+        )
+        if avg is not None:
+            self.choclito_bubble_text = (
+                f"Hoy {pending_phrase} y vas con {avg:.2f} de promedio. ¡Tú puedes{name_suffix}!"
+            )
+        else:
+            self.choclito_bubble_text = (
+                f"Hoy {pending_phrase}. Registra tus materias para ver tu promedio{name_suffix}."
+            )
 
     def navigate(self, screen_name):
         app = App.get_running_app()

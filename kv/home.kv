@@ -43,6 +43,49 @@
                     height: '20dp'
                     text_size: self.size
 
+                # Bloque Choclito (pose 6) + burbuja dinámica
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: '92dp'
+                    spacing: 12
+
+                    AnchorLayout:
+                        anchor_x: 'center'
+                        anchor_y: 'center'
+                        size_hint: (None, 1)
+                        width: '86dp'
+                        Image:
+                            source: 'img/choclito_6.png'
+                            size_hint: (None, None)
+                            size: ('84dp', '84dp')
+                            allow_stretch: True
+                            keep_ratio: True
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        padding: [14, 10]
+                        canvas.before:
+                            Color:
+                                rgba: app.card_color
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [dp(14)]
+                            Color:
+                                rgba: app.card_border
+                            Line:
+                                rounded_rectangle: [self.x, self.y, self.width, self.height, dp(14)]
+                                width: dp(1)
+
+                        Label:
+                            text: root.choclito_bubble_text
+                            font_size: '13sp'
+                            color: app.text_primary
+                            halign: 'left'
+                            valign: 'middle'
+                            text_size: (self.width, self.height)
+
                 # Tarjeta 1: Clases de Hoy (Enlace a Horario)
                 RelativeLayout:
                     size_hint_y: None

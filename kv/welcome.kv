@@ -4,8 +4,8 @@
     name: 'welcome'
     BoxLayout:
         orientation: 'vertical'
-        padding: [24, 40]
-        spacing: 20
+        padding: [24, 24]
+        spacing: 10
         canvas.before:
             Color:
                 rgba: app.bg_color
@@ -14,61 +14,43 @@
                 size: self.size
 
         Widget:
-            size_hint_y: 0.15
+            size_hint_y: 0.04
 
-        # Logotipo / Isotipo StudyMate
-        BoxLayout:
-            orientation: 'vertical'
+        # Mascota Choclito arriba como protagonista (estilo Choclito.html)
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
             size_hint_y: None
-            height: '110dp'
-            AnchorLayout:
-                anchor_x: 'center'
-                anchor_y: 'center'
-                BoxLayout:
-                    size_hint: (None, None)
-                    size: ('88dp', '88dp')
-                    canvas.before:
-                        Color:
-                            rgba: app.card_color
-                        RoundedRectangle:
-                            pos: self.pos
-                            size: self.size
-                            radius: [24]
-                        Color:
-                            rgba: app.card_border
-                        Line:
-                            rounded_rectangle: [self.x, self.y, self.width, self.height, 24]
-                            width: 1.5
-                    Label:
-                        text: ""
-                        font_name: 'MaterialIcons'
-                        font_size: '52sp'
-                        color: app.accent_blue
-                        halign: 'center'
-                        valign: 'middle'
+            height: '250dp'
+            Image:
+                source: 'img/choclito_2.png'
+                size_hint: (None, None)
+                size: ('230dp', '230dp')
+                allow_stretch: True
+                keep_ratio: True
 
         # Título
         Label:
-            text: "[b]StudyMate[/b]"
+            text: "[b]CalcuBro[/b]"
             markup: True
             font_size: '34sp'
             color: app.text_primary
             size_hint_y: None
-            height: '46dp'
+            height: '42dp'
             halign: 'center'
+            valign: 'middle'
+            text_size: self.size
 
-        # Descripción
+        # Descripción (igual a Choclito.html)
         Label:
-            text: "Tu acompañante académico: horario, notas\ny motivación en un solo lugar."
+            text: "Soy Choclito, tu acompañante académico:\nhorario, notas y motivación en un solo lugar."
             font_size: '15sp'
             color: app.text_secondary
             halign: 'center'
             valign: 'middle'
             size_hint_y: None
-            height: '50dp'
-
-        Widget:
-            size_hint_y: 0.25
+            height: '42dp'
+            text_size: self.size
 
         # Botón Comenzar
         PrimaryButton:
@@ -79,7 +61,7 @@
         Button:
             text: "Solo usar la calculadora, sin cuenta"
             size_hint_y: None
-            height: '44dp'
+            height: '40dp'
             background_normal: ''
             background_color: (0, 0, 0, 0)
             color: app.accent_blue
@@ -87,4 +69,4 @@
             on_release: root.go_calc()
 
         Widget:
-            size_hint_y: 0.1
+            size_hint_y: 0.04
